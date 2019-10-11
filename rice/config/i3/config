@@ -49,7 +49,7 @@ bindsym $mod+l focus up
 bindsym $mod+ograve focus right
 
 # alternatively, you can use the cursor keys:
-bindsym $mod+Left focus leftmenu_run
+bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
@@ -82,6 +82,21 @@ bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10 # decrease screen brightness
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -163,6 +178,23 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# gaps
+mode "gaps" {
+	bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+	
+	bindsym Shift+plus  gaps outer current plus 5
+        bindsym Shift+minus gaps outer current minus 5
+        bindsym Shift+0     gaps outer current set 0
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+x mode "gaps"
 # Start Polybar
 exec_always $HOME/.config/polybar/launch.sh
 # Start i3bar to display a workspace bar (plus the system information i3status
@@ -173,3 +205,17 @@ exec_always $HOME/.config/polybar/launch.sh
 
 # Launch Network Manager Applet
 exec_always nm-applet
+exec_always blueman-applet
+
+# Start Compton
+exec_always --no-startup-id "killall -q compton; compton"
+
+# Set windows borders
+for_window [class="^.*"] border pixel 3
+
+# set some nice colors      border  background  text    indicator
+client.focused              #ee35ee $ac        $tx     $id
+client.unfocused            $bg     $bg         $ia     $id
+client.focused_inactive     $bg     $bg         $ac     $id
+#client.urgent               $yw     $yw         $tx     $id
+exec feh --bg-fill Pictures/wallpaper.jpg
