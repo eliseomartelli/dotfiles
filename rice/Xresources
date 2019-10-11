@@ -41,15 +41,10 @@ URxvt.font: xft:NotoSansMono:pixelsize=12
 URxvt.scrollTtyKeypress: true
 URxvt.copyCommand: xclip -i -selection clipboard
 URxvt.letterSpace: 0
-URxvt.externalBorder: 8
+URxvt.externalBorder: 16
 
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 
-URxvt.perl-ext-common: default,url-select,clipboard
-URxvt.matcher.button: 3
-URxvt.url-select.launcher: google-chrome
-URxvt.url-select.underline: true
-URxvt.clipboard.autocopy: true
-URxvt.selection.pattern-0: \\|([^|]+)\\|
+URxvt.perl-ext-common: default,resize-font
 
