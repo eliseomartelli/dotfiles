@@ -169,7 +169,9 @@ mode "gaps" {
 
 bindsym $mod+x mode "gaps"
 
-bindsym Print exec scrot
+# bind keys to Scrot, a screenshot tool
+bindsym 		Print		exec --no-startup-id scrot
+bindsym --release 	$mod+Print 	exec --no-startup-id scrot -s 
 
 # Start Polybar
 exec_always $HOME/.config/polybar/launch.sh
@@ -186,8 +188,8 @@ exec_always --no-startup-id "killall -q compton; compton"
 # Set windows borders
 for_window [class="^.*"] border pixel 3
 
-# set some nice colors      border	background  	text    	indicator
-client.focused          #4c7899 #285577 #ffffff #2e9ef4   #9000ff
+# set some nice colors      border	background  	text    	indicator	border_visible
+client.focused              #4c7899 	#285577 	#ffffff 	#2e9ef4   	#093748
 
 # Set Wallpaper
 exec feh --bg-fill Pictures/wallpaper.jpg
@@ -199,4 +201,4 @@ assign [class="Spotify*"]	$ws10
 
 # Start lockscreen
 
-exec light-locker --lock-on-suspend --lock-on-lid &
+exec_always light-locker &

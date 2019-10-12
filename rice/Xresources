@@ -1,39 +1,39 @@
 ! special
-*.foreground:   #c5c8c6
-*.background:   #1d1f21
-*.cursorColor:  #c5c8c6
+*.foreground:   #98d1ce
+*.background:   #0a0f14
+*.cursorColor:  #98d1ce
 
 ! black
-*.color0:       #282a2e
-*.color8:       #373b41
+*.color0:       #0a0f14
+*.color8:       #10151b
 
 ! red
-*.color1:       #a54242
-*.color9:       #cc6666
+*.color1:       #c33027
+*.color9:       #d26939
 
 ! green
-*.color2:       #8c9440
-*.color10:      #b5bd68
+*.color2:       #26a98b
+*.color10:      #081f2d
 
 ! yellow
-*.color3:       #de935f
-*.color11:      #f0c674
+*.color3:       #edb54b
+*.color11:      #245361
 
 ! blue
-*.color4:       #5f819d
-*.color12:      #81a2be
+*.color4:       #195465
+*.color12:      #093748
 
 ! magenta
-*.color5:       #85678f
-*.color13:      #b294bb
+*.color5:       #4e5165
+*.color13:      #888ba5
 
 ! cyan
-*.color6:       #5e8d87
-*.color14:      #8abeb7
+*.color6:       #33859d
+*.color14:      #599caa
 
 ! white
-*.color7:       #707880
-*.color15:      #c5c8c6
+*.color7:       #98d1ce
+*.color15:      #d3ebe9
 
 URxvt.scrollTtyKeypress: true
 
