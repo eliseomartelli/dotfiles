@@ -6,6 +6,3 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # User specific environment and startup programs
-
-for f in ~/.config/bash_functions/*; do source $f; done
-
