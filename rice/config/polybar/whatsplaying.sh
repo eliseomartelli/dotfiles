@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "$(playerctl metadata xesam:title) - $(playerctl metadata xesam:artist)"
+echo "$(playerctl metadata xesam:artist) - $(playerctl metadata xesam:title)"

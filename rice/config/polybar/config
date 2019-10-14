@@ -52,7 +52,7 @@ font-1 = Noto Color Emoji:pixelsize=10
 
 modules-left = bspwm i3
 modules-center = music
-modules-right = xbacklight pulseaudio cpu battery temperature date
+modules-right = xbacklight pulseaudio cpu battery discharge temperature date
 
 tray-position = right
 tray-margin-left = 2
@@ -77,6 +77,11 @@ click-left = playerctl play-pause
 
 format = 🎵: <label>
 
+[module/discharge]
+type = custom/script
+exec = acpi | awk '{print $5}'
+
+
 [module/filesystem]
 type = internal/fs
 interval = 25
@@ -91,8 +96,7 @@ label-unmounted-foreground = ${colors.foreground-alt}
 type = internal/i3
 
 label-focused = %name%
-label-focused-background = ${xrdb:color12}
-label-focused-underline= ${xrdb:color3}
+label-focused-background = ${xrdb:color11}
 label-focused-padding = 2
 
 label-unfocused = %name%
@@ -113,14 +117,12 @@ label-empty-padding = 2
 type = internal/cpu
 interval = 2
 format-prefix = "📈: "
-format-underline = #f90000
 label = %percentage:2%%
 
 [module/memory]
 type = internal/memory
 interval = 2
 format-prefix = "🐏: "
-format-underline = #4bffdc
 label = %percentage_used%%
 
 [module/wlan]
@@ -129,12 +131,10 @@ interface = net1
 interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-underline = #9f78e1
 label-connected = %essid%
 
 format-disconnected =
 ;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
 
@@ -150,14 +150,12 @@ type = internal/network
 interface = net0
 interval = 3.0
 
-format-connected-underline = #55aa55
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.foreground-alt}
 label-connected = %local_ip%
 
 format-disconnected =
 ;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
 
@@ -173,7 +171,6 @@ time-alt = %H:%M:%S
 
 format-prefix = 
 format-prefix-foreground = ${colors.foreground-alt}
-format-underline = #0a6cf5
 
 label = %date% %time%
 
@@ -197,13 +194,10 @@ adapter = ADP1
 full-at = 98
 
 format-charging = 🔋: <label-charging>
-format-charging-underline = #ffb52a
 
 format-discharging = 🔋: <label-discharging>
-format-discharging-underline = ${self.format-charging-underline}
 
 format-full-prefix = "🔋: "
-format-full-underline = ${self.format-charging-underline}
 
 [module/temperature]
 type = internal/temperature
@@ -211,9 +205,7 @@ thermal-zone = 0
 warn-temperature = 60
 
 format = 🌡️: <label>
-format-underline = #f50a4d
 format-warn = 🌡️: <label-warn>
-format-warn-underline = ${self.format-underline}
 
 label = %temperature-c%
 label-warn = %temperature-c%
