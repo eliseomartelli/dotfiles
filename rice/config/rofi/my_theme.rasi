@@ -1,108 +1,133 @@
+/**
+ * User: deadguy
+ * Copyright: deadguy
+ */
+
+configuration {
+	show-icons: true;
+}
+
 * {
-    backgroundcolor: #1d1f21;
-    bg1: #1d1f21;
-    backgroundcoloralternate: #2e3440;
-    separatorcolor: #3b4252;
-    scrollbarcolor: #3b4252;
-    foregroundcolor: #788;
-    foregroundcolorinverse: #eee;
-    selectioncolor: #3b4252;
+	background-color:            #0a0f1499;
+	text-color:                  #b6fffb;
+	selbg:                       #215d9c;
+	actbg:                       #262626;
+	urgbg:                       #e53935;
+	winbg:			     #26c6da;
 
+	selected-normal-foreground:  @winbg;
+	normal-foreground:           @text-color;
+	selected-normal-background:  @actbg;
+	normal-background:           @background-color;
 
-    font-size: 1px;
-    border-color: @separatorcolor;
-    background-color: @backgroundcolor;
-    text-color: @foregroundcolor;
-    margin: 0;
-    margin-bottom: 0;
-    margin-top: 0;
-    spacing: 0;
+	selected-urgent-foreground:  @background-color;
+	urgent-foreground:           @text-color;
+	selected-urgent-background:  @urgbg;
+	urgent-background:           @background-color;
+
+	selected-active-foreground:  @winbg;
+	active-foreground:           @text-color;
+	selected-active-background:  @actbg;
+	active-background:           @selbg;
+
+	line-margin:                 2;
+	line-padding:                2;
+	separator-style:             "none";
+	hide-scrollbar:              "true";
+	margin:                      0;
+	padding:                     0;
 }
 
-#listview {
-    spacing: 0;
-    scrollbar: true;
-    margin: 0;
-    dynamic: true;
+window {
+	location:	center;
+	anchor:		center;
+	height:		100%;
+	width:		100%;
+	orientation:	vertical;
+	children:	[
+		mainbox
+	];
 }
 
-#window {
-    background-color: @backgroundcolor;
-    border-color: @separatorcolor;
-    border: 4px;
-    border-color: #9000ff;
-    border-radius: 4px;
+mainbox {
+	padding: 0 33%;
+	spacing:  0.8em;
+	children: [
+		entry,
+		listview
+	];
 }
 
-#mainbox {
-    border: 0;
-    padding: 0;
-    background-color: @backgroundcoloralternate;
+button { padding: 5px 2px; }
+
+button selected {
+	background-color: @active-background;
+	text-color:       @background-color;
 }
 
-#element {
-    padding: 16;
-    border: 0 0 1 0;
-    border-color: @separatorcolor;
-    background-color: @backgroundcoloralternate;
+inputbar {
+	padding: 5px;
+	spacing: 5px;
 }
 
-#element.selected.normal {
-    background-color: @selectioncolor;
-    text-color: @foregroundcolorinverse;
-    border-radius: 0px;
-
-    border: 0 0 1 0;
-    border-color: @separatorcolor;
+listview {
+	spacing: 0.5em;
+	dynamic: false;
+	cycle:   true;
 }
 
-#element.alternate.normal {
-    background-color: @backgroundcoloralternate;
+element { padding: 10px; }
+
+entry {
+	expand:         false;
+	text-color:     @normal-foreground;
+	vertical-align: 1;
+	padding:        5px;
 }
 
-#element.normal.active {
-    background-color: #434c5e;
+element normal.normal {
+	background-color: @normal-background;
+	text-color:       @normal-foreground;
 }
 
-#element.alternate.active {
-    background-color: #434c5e;
+element normal.urgent {
+	background-color: @urgent-background;
+	text-color:       @urgent-foreground;
 }
 
-#element.selected.active {
-    background-color: @selectioncolor;
-    text-color: @foregroundcolorinverse;
-    border-radius: 0px;
-
-    border: 0 0 1 0;
-    border-color: @separatorcolor;
+element normal.active {
+	background-color: @active-background;
+	text-color:       @active-foreground;
 }
 
-#inputbar {
-    border: 0 solid 0 solid 1 solid 0 solid;
-    margin: 0;
-    spacing: 0;
-    border-color: @separatorcolor;
+element selected.normal {
+	background-color: @selected-normal-background;
+	text-color:       @selected-normal-foreground;
+	border:           0 5px solid 0 0;
+	border-color:	    @active-background;
 }
 
-#prompt {
-    padding: 16;
-    background-color: @backgroundcoloralternate;
-    border: 0 1 0 0;
+element selected.urgent {
+	background-color: @selected-urgent-background;
+	text-color:       @selected-urgent-foreground;
 }
 
-#entry {
-    padding: 16;
+element selected.active {
+	background-color: @selected-active-background;
+	text-color:       @selected-active-foreground;
 }
 
-#scrollbar {
-    border: 0;
-    width: 8px;
-    handle-color: @scrollbarcolor;
-    handle-width: 8px;
-    background-color: @backgroundcoloralternate;
+element alternate.normal {
+	background-color: @normal-background;
+	text-color:       @normal-foreground;
 }
 
-#scrollbar handle {
-    border: 1px;
-    border-color: #ff0000;
+element alternate.urgent {
+	background-color: @urgent-background;
+	text-color:       @urgent-foreground;
+}
+
+element alternate.active {
+	background-color: @active-background;
+	text-color:       @active-foreground;
 }

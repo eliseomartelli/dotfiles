@@ -1,10 +1,10 @@
 configuration {
-/*	modi: "window,run,ssh";*/
+	modi: "window,run,ssh,drun";
 /*	width: 50;*/
-	lines: 5;
+/*	lines: 5;*/
 /*	columns: 1;*/
 	font: "Noto Sans 12";
-/*	bw: 1;*/
+	bw: 1;
 /*	location: 0;*/
 /*	padding: 5;*/
 /*	yoffset: 0;*/
@@ -43,7 +43,7 @@ configuration {
 /*	filter: ;*/
 /*	separator-style: "dash";*/
 /*	hide-scrollbar: false;*/
-/*	fullscreen: false;*/
+	fullscreen: true;
 /*	fake-transparency: false;*/
 /*	dpi: -1;*/
 /*	threads: 0;*/

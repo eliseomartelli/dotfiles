@@ -157,7 +157,7 @@ mode "gaps" {
         bindsym minus gaps inner current minus 5
         bindsym 0     gaps inner current set 0
 	
-	bindsym d     gaps inner all set 20
+	bindsym d     gaps inner all set 45
 
 	bindsym Shift+plus  gaps outer current plus 5
         bindsym Shift+minus gaps outer current minus 5
@@ -204,3 +204,6 @@ assign [class="Spotify*"]	$ws10
 # Start lockscreen
 
 exec_always light-locker &
+
+
+bindsym $mod+period exec rofi-emoji.sh
