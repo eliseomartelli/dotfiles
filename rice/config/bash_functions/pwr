@@ -1,3 +1,4 @@
 function pwr() {
 	cat /sys/class/power_supply/BAT0/power_now | awk '{print $1*10^-6 " W"}'
+	acpi | awk '{print $5}'
 }
