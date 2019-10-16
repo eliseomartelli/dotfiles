@@ -20,11 +20,11 @@
 *.color11:      #245361
 
 ! blue
-*.color4:       #195465
+*.color4:       #3ba5c3
 *.color12:      #f28bff
 
 ! magenta
-*.color5:       #4e5165
+*.color5:       #5e6dd1
 *.color13:      #888ba5
 
 ! cyan

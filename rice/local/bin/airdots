@@ -1,0 +1,27 @@
+#!/bin/bash
+MAC="E8:EC:A3:30:0C:62"
+MODE="connect"
+
+STATUS=$(bluetoothctl info $MAC | grep "Connected" | awk '{print $2}')
+
+case $1 in 
+	on|enable)
+		MODE="connect"
+	;;
+	off|disable)
+		MODE="disconnect"
+	;;
+	t|toggle)
+		
+		if [ *yes* == $STATUS ]
+		then
+			MODE="disconnect"
+		else
+			MODE="connect"
+		fi
+	;;
+esac
+
+bluetoothctl << EOF
+$MODE $MAC
+EOF
