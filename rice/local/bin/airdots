@@ -1,6 +1,11 @@
 #!/bin/bash
+
+##### CONFIGURATION #####
+
 MAC="E8:EC:A3:30:0C:62"
 MODE="connect"
+
+#########################
 
 STATUS=$(bluetoothctl info $MAC | grep "Connected" | awk '{print $2}')
 
@@ -12,8 +17,8 @@ case $1 in
 		MODE="disconnect"
 	;;
 	t|toggle)
-		
-		if [ *yes* == $STATUS ]
+		echo $STATUS | grep "yes" # Check if already connected
+		if [ $? == 0 ];
 		then
 			MODE="disconnect"
 		else
