@@ -62,7 +62,7 @@ bindsym $mod+Shift+space floating toggle
 bindsym XF86AudioRaiseVolume 	exec --no-startup-id volume-control	set-sink-volume  +5% #increase sound volume
 bindsym XF86AudioLowerVolume 	exec --no-startup-id volume-control	set-sink-volume  -5% #decrease sound volume
 bindsym XF86AudioMute 		exec --no-startup-id volume-control	set-sink-mute 	 toggle # mute sound
-bindsym XF86AudioMicMute 	exec --no-startup-id pactl 				set-source-mute 0 toggle # mute sound
+bindsym XF86AudioMicMute 	exec --no-startup-id mic-control	set-source-mute  toggle # mute sound
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp 	exec xbacklight -inc 10 # increase screen brightness
