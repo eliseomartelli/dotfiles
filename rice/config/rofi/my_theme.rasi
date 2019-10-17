@@ -4,7 +4,7 @@ configuration {
 
 * {
 	background-color:            #0a0f1499;
-	text-color:                  #b6fffb;
+	text-color:                  #fff;
 	selbg:                       #215d9c;
 	actbg:                       #262626;
 	urgbg:                       #e53935;
