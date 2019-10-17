@@ -46,7 +46,6 @@ window {
 }
 
 mainbox {
-	background-color: #00000000;
 	spacing:  0.8em;
 	children: [
 		entry,

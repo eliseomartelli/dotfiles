@@ -177,13 +177,13 @@ bindsym 		Print		exec --no-startup-id scrot
 bindsym --release 	$mod+Print 	exec --no-startup-id scrot -s 
 
 # Start Polybar
-exec_always $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # Launch Network Manager Applet
-exec_always nm-applet &
+exec_always --no-startup-id nm-applet &
 
 # Launch Blueman Applet
-exec_always blueman-applet &
+exec_always --no-startup-id blueman-applet &
 
 # Start Compton
 exec_always --no-startup-id "killall -q compton; compton"
@@ -195,15 +195,15 @@ for_window [class="^.*"] border pixel 3
 client.focused              #4c7899 	#285577 	#ffffff 	#2e9ef4   	#093748
 
 # Set Wallpaper
-exec feh --bg-fill Pictures/wallpaper.jpg
+exec_always --no-startup-id feh --bg-fill Pictures/wallpaper.jpg
 
 
-assign [class="Telegram*"]	$ws9
-assign [class="Spotify*"]	$ws10
+assign 	   [class="Telegram*"]	$ws9
+for_window [class="Spotify*"]	assign		$ws10
 
 # Start lockscreen
 
-exec_always light-locker &
+exec_always --no-startup-id light-locker &
 
 
 bindsym $mod+period exec rofi-emoji.sh

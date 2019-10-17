@@ -7,7 +7,7 @@ MODE="connect"
 
 #########################
 
-STATUS=$(bluetoothctl info $MAC | grep "Connected" | awk '{print $2}')
+STATUS=$(bluetoothctl info $MAC | awk '/Connected/ {print $2}')
 
 case $1 in 
 	on|enable)
