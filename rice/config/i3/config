@@ -147,7 +147,6 @@ mode "resize" {
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
         bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
 }
 
 bindsym $mod+r mode "resize"
@@ -163,11 +162,10 @@ mode "gaps" {
 	bindsym Shift+plus  gaps outer current plus 5
         bindsym Shift+minus gaps outer current minus 5
         bindsym Shift+0     gaps outer current set 0
-
-        # back to normal: Enter or Escape or $mod+r
+ 
+ 	# back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
         bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
 }
 
 bindsym $mod+x mode "gaps"
@@ -207,3 +205,18 @@ exec_always --no-startup-id light-locker &
 
 
 bindsym $mod+period exec rofi-emoji.sh
+
+set $mode_lock "🔒: l, 🚫: e, ❄: i, ⏸️: s, 📴: Shift+S" 
+
+mode $mode_lock {
+	bindsym l 	exec --no-startup-id light-locker-command -l, mode "default"
+	bindsym e 	exec --no-startup-id i3-msg exit, mode "default"
+	bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default" 
+	bindsym i exec --no-startup-id systemctl hibernate -i, mode "default" 
+	bindsym s exec --no-startup-id systemctl suspend -i, mode "default" 
+	# back to normal: Enter or Escape
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+}
+
+bindsym $mod+Shift+x mode $mode_lock

@@ -52,8 +52,7 @@ URxvt.depth: 24
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 
-URxvt.font: xft:NotoSansMono-Bold:pixelsize=14, xft:Noto Color Emoji:pixelsize=14
-
+URxvt.font: xft:NotoSansMono-Bold:pixelsize=14,xft:NotoColorEmoji
 URxvt.perl-ext-common: default,resize-font
 
 
