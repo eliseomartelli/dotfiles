@@ -206,17 +206,4 @@ exec_always --no-startup-id light-locker &
 
 bindsym $mod+period exec rofi-emoji.sh
 
-set $mode_lock "🔒: l, 🚫: e, ❄: i, ⏸️: s, 📴: Shift+S" 
-
-mode $mode_lock {
-	bindsym l 	exec --no-startup-id light-locker-command -l, mode "default"
-	bindsym e 	exec --no-startup-id i3-msg exit, mode "default"
-	bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default" 
-	bindsym i exec --no-startup-id systemctl hibernate -i, mode "default" 
-	bindsym s exec --no-startup-id systemctl suspend -i, mode "default" 
-	# back to normal: Enter or Escape
-	bindsym Return mode "default"
-	bindsym Escape mode "default"
-}
-
-bindsym $mod+Shift+x mode $mode_lock
+bindsym $mod+Shift+x exec --no-startup-id rofi-power.sh
