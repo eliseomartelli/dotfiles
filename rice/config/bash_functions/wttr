@@ -1,0 +1,3 @@
+function wttr() {
+	curl wttr.in/?Q0p
+}

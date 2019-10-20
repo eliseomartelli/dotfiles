@@ -1,0 +1,3 @@
+function captive_login() {
+	xdg-open http://captive.apple.com
+}

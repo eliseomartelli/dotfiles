@@ -4,6 +4,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'vim-syntastic/syntastic'
+Plug 'valloric/youcompleteme'
 
 call plug#end()
 
