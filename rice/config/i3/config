@@ -67,6 +67,8 @@ bindsym XF86AudioMicMute 	exec --no-startup-id mic-control	set-source-mute  togg
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp 	exec --no-startup-id xbacklight -inc 10 # increase screen brightness
 bindsym XF86MonBrightnessDown 	exec --no-startup-id xbacklight -dec 10 # decrease screen brightness
+bindsym Shift+XF86MonBrightnessDown 	exec --no-startup-id redshift -O 3400k 
+bindsym Shift+XF86MonBrightnessUp 	exec --no-startup-id redshift -x
 
 # Media player controls
 bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause

@@ -20,11 +20,11 @@
 *.color11:      #245361
 
 ! blue
-*.color4:       #3ba5c3
+*.color4:       #195465
 *.color12:      #f28bff
 
 ! magenta
-*.color5:       #5e6dd1
+*.color5:       #4e5165
 *.color13:      #888ba5
 
 ! cyan
@@ -52,7 +52,8 @@ URxvt.depth: 24
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 
-URxvt.font: xft:NotoSansMono-Bold:pixelsize=14,xft:NotoColorEmoji
+URxvt.font: xft:NotoSansMono-Bold:pixelsize=14, xft:Noto Color Emoji:pixelsize=14
+
 URxvt.perl-ext-common: default,resize-font
 
 
