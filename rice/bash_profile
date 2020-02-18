@@ -8,3 +8,6 @@ fi
 
 # User specific environment and startup programs
 
+# SUPPRESS THAT STUPID OSX THING
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
