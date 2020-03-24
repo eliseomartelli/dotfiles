@@ -5,14 +5,14 @@ configuration {
 * {
 	background-color: #00000000;
 	text-color: White;
-	active-background: #00000088;
+	active-background: #00000000;
 
 }
 
 window {
 	location:	center;
 	anchor:		center;
-	background-color: #0a0f14DD;
+	background-color: #00000066;
 }
 
 mainbox {

@@ -17,10 +17,10 @@
 ;==========================================================
 
 [colors]
-background = #aa000000
+background = #66000000
 ;background = #222
 background-alt = #444
-foreground = ${xrdb:foreground:#222}
+foreground = #fff
 ;foreground = #dfdfdf
 foreground-alt = #555
 primary = ${xrdb:color10}
@@ -82,6 +82,7 @@ type = internal/i3
 
 label-focused = %name%
 label-focused-background = ${xrdb:color11}
+label-focused-foreground = #212121
 label-focused-padding = 2
 
 label-unfocused = %name%

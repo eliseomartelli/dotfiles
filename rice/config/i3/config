@@ -189,10 +189,10 @@ exec_always --no-startup-id blueman-applet &
 exec_always --no-startup-id "killall -q picom; picom --experimental-backends &"
 
 # Set windows borders
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 0
 
 # set some nice colors      border	background  	text    	indicator	border_visible
-client.focused              #4c7899 	#285577 	#ffffff 	#2e9ef4   	#093748
+# client.focused              #4c7899 	#285577 	#ffffff 	#2e9ef4   	#093748
 
 # Set Wallpaper
 exec_always --no-startup-id feh --bg-fill Pictures/wallpaper.jpg

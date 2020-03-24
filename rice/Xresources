@@ -1,39 +1,39 @@
 ! special
-*.foreground:   #b6fffb
-*.background:   #0a0f14
-*.cursorColor:  #b6fffb
+*.foreground:   #ffffff
+*.background:   #000000
+*.cursorColor:  #ffffff
 
 ! black
-*.color0:       #0a0f14
-*.color8:       #55a8b3
+*.color0:       #1b1d1e
+*.color8:       #505354
 
 ! red
-*.color1:       #c33027
-*.color9:       #d26939
+*.color1:       #f92672
+*.color9:       #ff5995
 
 ! green
-*.color2:       #26a98b
-*.color10:      #41b7ff
+*.color2:       #82b414
+*.color10:      #b6e354
 
 ! yellow
-*.color3:       #edb54b
-*.color11:      #245361
+*.color3:       #fd971f
+*.color11:      #feed6c
 
 ! blue
-*.color4:       #195465
-*.color12:      #f28bff
+*.color4:       #4e82aa
+*.color12:      #0c73c2
 
 ! magenta
-*.color5:       #4e5165
-*.color13:      #888ba5
+*.color5:       #8c54fe
+*.color13:      #9e6ffe
 
 ! cyan
-*.color6:       #33859d
-*.color14:      #599caa
+*.color6:       #465457
+*.color14:      #899ca1
 
 ! white
-*.color7:       #98d1ce
-*.color15:      #d3ebe9
+*.color7:       #ccccc6
+*.color15:      #f8f8f2
 
 URxvt.scrollTtyKeypress: true
 
@@ -52,8 +52,6 @@ URxvt.depth: 24
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 
-URxvt.font: xft:NotoSansMono-Bold:pixelsize=14, xft:Noto Color Emoji:pixelsize=14
+URxvt.font: xft:NotoSansMono-Bold:pixelsize=14, xft:Noto Color Emoji
 
 URxvt.perl-ext-common: default,resize-font
-
-
