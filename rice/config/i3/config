@@ -186,7 +186,7 @@ exec_always --no-startup-id nm-applet &
 exec_always --no-startup-id blueman-applet &
 
 # Start Compton
-exec_always --no-startup-id "killall -q picom; picom &"
+exec_always --no-startup-id "killall -q picom; picom --experimental-backends &"
 
 # Set windows borders
 for_window [class="^.*"] border pixel 3
