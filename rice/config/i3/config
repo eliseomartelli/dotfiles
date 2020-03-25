@@ -210,6 +210,6 @@ bindsym $mod+period exec --no-startup-id rofi-emoji.sh
 
 bindsym $mod+Shift+x exec --no-startup-id rofi-power.sh
 
-bindsym XF86Launch1 exec --no-startup-id urxvt -e ranger
+bindsym XF86Launch1 exec --no-startup-id kitty -e ranger
 
 bindsym $mod+c exec --no-startup-id killall compton
