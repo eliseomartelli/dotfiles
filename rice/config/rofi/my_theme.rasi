@@ -12,7 +12,7 @@ configuration {
 window {
 	location:	center;
 	anchor:		center;
-	background-color: #00000066;
+	background-color: #000000CC;
 }
 
 mainbox {
