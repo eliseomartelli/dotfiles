@@ -50,7 +50,7 @@ module-margin-right = 2
 font-0 = Noto Sans Bold :pixelsize=10
 font-1 = Noto Color Emoji:scale=10
 
-modules-left = i3
+modules-left = i3 
 modules-center = music
 modules-right = xbacklight pulseaudio cpu battery temperature date
 
