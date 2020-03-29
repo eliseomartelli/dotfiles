@@ -17,7 +17,7 @@
 ;==========================================================
 
 [colors]
-background = #66000000
+background = #55000000
 ;background = #222
 background-alt = #444
 foreground = #fff
@@ -47,8 +47,8 @@ padding-right = 2
 module-margin-left = 2
 module-margin-right = 2
 
-font-0 = Noto Sans Bold :pixelsize=10
-font-1 = Noto Color Emoji:scale=10
+font-0 = Noto Sans:pixelsize=10
+font-1 = Material Icons:pixelsize=12;2
 
 modules-left = i3 
 modules-center = music
@@ -75,7 +75,7 @@ exec = $HOME/.config/polybar/whatsplaying.sh
 
 click-left = playerctl play-pause
 
-format = 🎵: <label>
+format = : <label>
 
 [module/i3]
 type = internal/i3
@@ -102,7 +102,7 @@ label-empty-padding = 2
 [module/cpu]
 type = internal/cpu
 interval = 2
-format-prefix = "📈: "
+format-prefix = ": "
 label = %percentage:2%%
 
 [module/date]
@@ -124,14 +124,14 @@ label = %date% %time%
 type = internal/pulseaudio
 
 format-volume = <label-volume>
-label-volume =  🔉: %percentage%%
+label-volume =  : %percentage%%
 
-label-muted = 🔇: muted
+label-muted = : muted
 label-muted-foreground = #666
 
 [module/xbacklight]
 type = internal/xbacklight
-label = 🌞: %percentage%%
+label = : %percentage%%
 
 [module/battery]
 type = internal/battery
@@ -139,19 +139,19 @@ battery = BAT0
 adapter = ADP1
 full-at = 98
 
-format-charging = 🔋: <label-charging>
+format-charging = : <label-charging>
 
-format-discharging = 🔋: <label-discharging>
+format-discharging = : <label-discharging>
 
-format-full-prefix = "🔋: "
+format-full-prefix = ": "
 
 [module/temperature]
 type = internal/temperature
 thermal-zone = 0
 warn-temperature = 60
 
-format = 🌡️: <label>
-format-warn = 🌡️: <label-warn>
+format = : <label>
+format-warn = : <label-warn>
 
 label = %temperature-c%
 label-warn = %temperature-c%
