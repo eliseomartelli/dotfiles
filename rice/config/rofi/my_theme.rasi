@@ -1,5 +1,16 @@
 configuration {
+	drun-display-format: "{icon} {name}";
 	show-icons: true;
+		drun-display-format: "{icon} {name}";
+    	display-drun: "Applications";
+		show-icons: true;
+		location: 0;
+		columns: 3;
+		fake-transparency: false;
+		hide-scrollbar: true;
+		bw: 0;
+	show-icons: true;
+		sidebar-mode: false;
 }
 
 * {

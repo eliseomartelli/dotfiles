@@ -35,7 +35,8 @@ height = 24
 ;offset-y = 1%
 fixed-center = true
 
-background = ${colors.background}
+background-0 = ${colors.background}
+background-1 = #00000000
 foreground = ${colors.foreground}
 
 line-size = 2
@@ -55,11 +56,12 @@ modules-center = music
 modules-right = xbacklight pulseaudio cpu battery temperature date
 
 tray-position = right
-tray-margin-left = 2
-tray-padding = 2
+;tray-margin-left = 2
+;tray-padding = 2
 tray-transparent = true
+tray-background = #00000000
 
-wm-restack = i3
+;wm-restack = i3
 
 ;override-redirect = true
 
@@ -116,18 +118,21 @@ time = %H:%M
 time-alt = %H:%M:%S
 
 format-prefix = 
-format-prefix-foreground = ${colors.foreground-alt}
 
 label = %date% %time%
 
 [module/pulseaudio]
 type = internal/pulseaudio
 
-format-volume = <label-volume>
-label-volume =  : %percentage%%
+format-volume = "<ramp-volume>: <label-volume>"
+label-volume = %percentage%%
 
 label-muted = : muted
-label-muted-foreground = #666
+label-muted-foreground = #f00
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
 
 [module/xbacklight]
 type = internal/xbacklight
