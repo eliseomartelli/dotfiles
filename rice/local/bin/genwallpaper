@@ -1,0 +1,3 @@
+#!/bin/bash
+
+composite $1 ~/Pictures/overlay.jpg -gravity Center -compose Screen $2
