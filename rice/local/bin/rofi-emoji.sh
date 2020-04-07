@@ -72,4 +72,6 @@ if [ ! -f "$EMOJI_FILE" ]; then
     download
 fi
 
-cat $EMOJI_FILE | awk 'NR > 1'| rofi -i -p emoji -dmenu | sed "s/ .*//" | xclip -selection clipboard
+EMOJI=$(cat $EMOJI_FILE | awk 'NR > 1'| rofi -i -p emoji -dmenu | sed "s/ .*//" )
+
+xdotool type "$EMOJI"
