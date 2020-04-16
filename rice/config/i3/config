@@ -173,8 +173,8 @@ mode "gaps" {
 bindsym $mod+x mode "gaps"
 
 # bind keys to Scrot, a screenshot tool
-bindsym 		Print		exec --no-startup-id scrot
-bindsym --release 	$mod+Print 	exec --no-startup-id scrot -s 
+bindsym 		Print		exec --no-startup-id maim ~/Screenshots/$(date +%s).png
+bindsym --release 	$mod+Print 	exec --no-startup-id maim -s ~/Screenshots/$(date +%s).png
 
 # Start Polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
