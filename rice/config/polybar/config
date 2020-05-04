@@ -58,7 +58,7 @@ modules-right = xbacklight pulseaudio cpu battery temperature date
 tray-position = right
 ;tray-margin-left = 2
 ;tray-padding = 2
-tray-transparent = true
+;tray-transparent = true
 tray-background = #00000000
 
 ;wm-restack = i3
