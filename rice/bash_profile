@@ -8,3 +8,5 @@ fi
 # User specific environment and startup programs
 
 alias please="sudo !!"
+
+set -o vi
