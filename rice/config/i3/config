@@ -212,6 +212,6 @@ bindsym $mod+Shift+x exec --no-startup-id rofi-power.sh
 
 bindsym XF86Launch1 exec --no-startup-id kitty -e ranger
 
-bindsym $mod+c exec --no-startup-id killall compton
+bindsym $mod+c exec --no-startup-id killall picom
 
 bindsym $mod+Shift+d exec --no-startup-id rofi-hass.sh
