@@ -2,7 +2,7 @@
 
 call plug#begin('~/.vim/plugged')
     Plug 'scrooloose/nerdtree'
-    Plug 'Valloric/YouCompleteMe'
+    " Plug 'Valloric/YouCompleteMe'
 call plug#end()
 
 nmap <Bslash> :NERDTreeToggle<CR>
