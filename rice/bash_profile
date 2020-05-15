@@ -1,3 +1,6 @@
+source /usr/local/etc/profile.d/bash_completion.sh
+
+
 #.bash_profile
 export LC_ALL=en_US.UTF-8
 
@@ -12,3 +15,4 @@ fi
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 eval "$(gh completion -s bash)"
+
