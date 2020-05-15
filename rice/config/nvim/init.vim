@@ -1,4 +1,5 @@
 set number 
+syntax on
 
 call plug#begin('~/.vim/plugged')
 
