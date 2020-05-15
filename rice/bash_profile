@@ -1,4 +1,5 @@
 #.bash_profile
+export LC_ALL=en_US.UTF-8
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
@@ -6,4 +7,7 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # User specific environment and startup programs
+
+# SUPPRESS THAT STUPID OSX THING
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
