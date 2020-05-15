@@ -14,5 +14,3 @@ fi
 # SUPPRESS THAT STUPID OSX THING
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-eval "$(gh completion -s bash)"
-
