@@ -1,4 +1,5 @@
 set number 
+set wrap!
 
 call plug#begin('~/.vim/plugged')
 
