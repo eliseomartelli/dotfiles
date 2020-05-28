@@ -80,4 +80,5 @@ shift + alt - f : yabai -m window --toggle native-fullscreen
 
 .blacklist [
 	"Logic Pro X"
+    "Android Studio"
 ]
