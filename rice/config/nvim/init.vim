@@ -24,7 +24,7 @@ set ignorecase      " Search case insensitive
 set ruler           " Show line and col in status
 set mouse=a         " Add mouse support
 
-nnoremap <Up>       :resize +2<CR>              " Resize +
-nnoremap <Down>     :resize -2<CR>              " Resize -
-nnoremap <Left>     :vertical resize +2<CR>     " Resize vertical+
-nnoremap <Right>    :vertical resize -2<CR>     " Resize vertical-
+" nnoremap <Up>       :resize +2<CR>              " Resize +
+" nnoremap <Down>     :resize -2<CR>              " Resize -
+" nnoremap <Left>     :vertical resize +2<CR>     " Resize vertical+
+" nnoremap <Right>    :vertical resize -2<CR>     " Resize vertical-
