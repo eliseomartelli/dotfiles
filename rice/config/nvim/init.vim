@@ -5,6 +5,8 @@ call plug#begin('~/.vim/plugged')
     Plug 'Valloric/YouCompleteMe'
 call plug#end()
 
+set encoding=utf-8
+
 nmap <Bslash> :NERDTreeToggle<CR>
 
 imap <S-Tab> <C-P>
