@@ -1,3 +1,6 @@
 [user]
 	email = me@eliseomartelli.it
 	name = Eliseo Martelli
+	signingkey = FE81CDB04848CC6E29F85A499560E7AF90F0E1B9
+[commit]
+	gpgSign = true
