@@ -1,0 +1,14 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": [
+    "c",
+    "cpp",
+    "json",
+    "python",
+    "javascript",
+    "typescript",
+    "css",
+    "markdown"
+  ],
+  "python.formatting.provider": "black",
+  "explorer.icon.enableNerdfont": true
+}
