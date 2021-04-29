@@ -1,4 +1,0 @@
-#!/bin/bash
-DEF_SOURCE=$(pactl info | grep "Default Source" | awk '{print $3}')
-
-pactl $1 $DEF_SOURCE $2 

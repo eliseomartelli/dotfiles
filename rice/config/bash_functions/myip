@@ -1,4 +1,0 @@
-function myip() {
-	printf "IPV4: %s\n" $(curl -s -4 ifconfig.co)
-	printf "IPV6: %s\n" $(curl -s -6 ifconfig.co)
-}
