@@ -21,10 +21,6 @@ nnoremap <Down> :resize -5<CR>
 map <C-t> :FZF <CR>
 map <Leader>t :Rg <CR>
 
-if executable('rg')
-	let g:rg_derive_root='true'
-endif
-
 " Clear highlighting on escape in normal mode
 nnoremap <esc> :noh<return>
 

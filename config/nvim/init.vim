@@ -71,6 +71,11 @@ set undofile
 " Set path for search.
 set path+=**
 
+" Configure some plugins.
+if executable('rg')
+	let g:rg_derive_root='true'
+endif
+
 let g:vimspector_enable_mappings = 'HUMAN'
 " }}}
 
