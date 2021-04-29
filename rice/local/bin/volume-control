@@ -1,4 +1,0 @@
-#!/bin/bash
-DEF_SINK=$(pactl info | grep "Default Sink" | awk '{print $3}')
-
-pactl $1 $DEF_SINK $2 
