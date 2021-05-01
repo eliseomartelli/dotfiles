@@ -26,3 +26,6 @@ nnoremap <esc> :noh<return>
 
 " Allow escape to be remapped
 nnoremap <esc>^[ <esc>^[
+
+" Open workspace terminal.
+nnoremap <leader>s :below 10sp term://$SHELL<CR>i
