@@ -77,6 +77,10 @@ if executable('rg')
 endif
 
 let g:vimspector_enable_mappings = 'HUMAN'
+
+" Split below and right by default.
+set splitbelow
+set splitright
 " }}}
 
 runtime plugins.vim
