@@ -11,3 +11,18 @@ call plug#begin('~/.config/nvim/plugged')
 	Plug 'puremourning/vimspector'
 call plug#end()
 
+
+let g:coc_global_extensions = [
+	\ 'coc-clangd',
+	\ 'coc-deno',
+	\ 'coc-eslint',
+	\ 'coc-explorer',
+	\ 'coc-highlight',
+	\ 'coc-html',
+	\ 'coc-json',
+	\ 'coc-pairs',
+	\ 'coc-prettier',
+	\ 'coc-pyright',
+	\ 'coc-tabnine',
+	\ 'coc-tsserver',
+	\ ]
