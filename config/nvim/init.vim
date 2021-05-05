@@ -14,7 +14,7 @@ set autoindent
 
 " Configure spell checking.
 set spelllang=en_us,it
-set spell
+" set spell
 
 " Configure command line.
 set wildmenu
