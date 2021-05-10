@@ -44,7 +44,6 @@ set confirm
 set mouse=a
 set number
 set relativenumber
-set conceallevel=1
 set foldmethod=marker
 set colorcolumn=80
 set cursorline
