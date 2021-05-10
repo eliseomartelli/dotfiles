@@ -7,8 +7,10 @@
     "javascript",
     "typescript",
     "css",
-    "markdown"
+    "markdown",
+    "typescriptreact"
   ],
   "python.formatting.provider": "black",
-  "explorer.icon.enableNerdfont": true
+  "explorer.icon.enableNerdfont": true,
+  "tailwindCSS.emmetCompletions": true
 }
