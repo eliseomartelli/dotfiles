@@ -29,3 +29,6 @@ nnoremap <esc>^[ <esc>^[
 
 " Open workspace terminal.
 nnoremap <leader>s :below 10sp term://$SHELL<CR>i
+
+" Toggle goyo
+map <Leader>g :Goyo <CR>

@@ -3,6 +3,7 @@ call plug#begin('~/.config/nvim/plugged')
 	Plug 'airblade/vim-gitgutter'
 	Plug 'jremmen/vim-ripgrep'
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+	Plug 'junegunn/goyo.vim', {'as': 'goyo'}
 	Plug 'mhartington/oceanic-next'
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	Plug 'puremourning/vimspector'
