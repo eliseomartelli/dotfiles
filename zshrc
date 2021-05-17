@@ -102,6 +102,7 @@ source $ZSH/oh-my-zsh.sh
 #
 
 alias p="cd ~/Projects"
+alias u="cd ~/Documents/University"
 
 autoload -U compinit
 compinit -i
