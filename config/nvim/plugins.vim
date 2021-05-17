@@ -1,4 +1,5 @@
 call plug#begin('~/.config/nvim/plugged')
+	Plug 'dsznajder/vscode-es7-javascript-react-snippets', { 'do': 'yarn install --frozen-lockfile && yarn compile' }
 	Plug 'HerringtonDarkholme/yats.vim', {'as': 'yats'}
 	Plug 'airblade/vim-gitgutter'
 	Plug 'jremmen/vim-ripgrep'
@@ -22,10 +23,12 @@ let g:coc_global_extensions = [
 	\ 'coc-explorer',
 	\ 'coc-highlight',
 	\ 'coc-html',
+	\ 'coc-java',
 	\ 'coc-json',
 	\ 'coc-pairs',
 	\ 'coc-prettier',
 	\ 'coc-pyright',
+	\ 'coc-snippets',
 	\ 'coc-tabnine',
 	\ 'coc-tailwindcss',
 	\ 'coc-tsserver',

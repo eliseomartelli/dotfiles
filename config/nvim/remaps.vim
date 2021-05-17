@@ -31,4 +31,4 @@ nnoremap <esc>^[ <esc>^[
 nnoremap <leader>s :below 10sp term://$SHELL<CR>i
 
 " Toggle goyo
-map <Leader>g :Goyo <CR>
+map <Leader>x :Goyo <CR>
