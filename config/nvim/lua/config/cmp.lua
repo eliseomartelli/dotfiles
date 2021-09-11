@@ -9,5 +9,8 @@ cmp.setup({
     ['<C-y>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = {
+    { name = 'nvim_lsp' },
+    { name = 'path' },
+    { name = 'buffer' },
   }
 })

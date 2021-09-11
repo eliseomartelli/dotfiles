@@ -1,7 +1,7 @@
+require("config.paq")
 require("config.cmp")
 require("config.colorscheme")
 require("config.lsp")
-require("config.paq")
 require("config.treesitter")
 require("remaps")
 
@@ -11,6 +11,9 @@ require "paq" {
 	{'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'};
 	"kyazdani42/nvim-web-devicons";
 	"kyazdani42/nvim-tree.lua";
+	"rafamadriz/friendly-snippets";
+	"hrsh7th/vim-vsnip-integ";
+	"hrsh7th/cmp-nvim-lsp";
 	"hrsh7th/nvim-cmp";
     "hrsh7th/vim-vsnip";
     "hrsh7th/cmp-buffer";
@@ -83,3 +86,6 @@ vim.opt.path = vim.opt.path + '**'
 -- Split below and right by default.
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+
+-- Copleteopt
+vim.opt.completeopt = 'menuone,noselect'
