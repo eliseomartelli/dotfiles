@@ -12,4 +12,4 @@ vim.api.nvim_set_keymap('n', '<Left>', '<cmd>vertical resize +2<CR>', {noremap =
 vim.api.nvim_set_keymap('n', '<Right>', '<cmd>vertical resize -2<CR>', {noremap = true})
 
 -- Explorer
-vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>:NvimTreeToggle<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '\\e', '<cmd>:NvimTreeToggle<CR>', {noremap = true})
