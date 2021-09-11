@@ -1,6 +1,8 @@
+require("config.cmp")
+require("config.colorscheme")
+require("config.lsp")
 require("config.paq")
 require("config.treesitter")
-require("config.lsp")
 require("remaps")
 
 require "paq" {
@@ -12,6 +14,7 @@ require "paq" {
 	"hrsh7th/nvim-cmp";
     "hrsh7th/vim-vsnip";
     "hrsh7th/cmp-buffer";
+	"mhartington/oceanic-next";
 }
 
 -- filetype indent plugin on
