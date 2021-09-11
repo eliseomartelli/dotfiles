@@ -6,7 +6,7 @@ cmp.setup({
     end,
   },
   mapping = {
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = {
     { name = 'nvim_lsp' },
