@@ -12,6 +12,7 @@ require "paq" {
 	"kyazdani42/nvim-web-devicons";
 	"kyazdani42/nvim-tree.lua";
 	"rafamadriz/friendly-snippets";
+	"hrsh7th/cmp-vsnip";
 	"hrsh7th/vim-vsnip-integ";
 	"hrsh7th/cmp-nvim-lsp";
 	"hrsh7th/nvim-cmp";
