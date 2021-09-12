@@ -9,9 +9,9 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = {
+    { name = 'buffer' },
     { name = 'nvim_lsp' },
     { name = 'path' },
-    { name = 'buffer' },
     { name = 'vsnip' },
   }
 })
