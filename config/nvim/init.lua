@@ -18,6 +18,7 @@ require "paq" {
 	"hrsh7th/nvim-cmp";
     "hrsh7th/vim-vsnip";
     "hrsh7th/cmp-buffer";
+	"tpope/vim-fugitive";
 	"mhartington/oceanic-next";
 }
 
