@@ -1,3 +1,4 @@
+-- init.lua, imports all configuration files.
 require("options")
 require("remaps")
 require("dependencies")
@@ -6,4 +7,3 @@ require("config.cmp")
 require("config.colorscheme")
 require("config.lsp")
 require("config.treesitter")
-

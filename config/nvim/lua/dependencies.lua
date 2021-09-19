@@ -29,5 +29,12 @@ require "paq" {
 
 	-- oceanic-next.
 	"mhartington/oceanic-next";
+
+	-- telescope.
+	"nvim-lua/plenary.nvim";
+	"nvim-telescope/telescope.nvim";
+
+	-- cheat.sh.
+	"dbeniamine/cheat.sh-vim";
 }
 
