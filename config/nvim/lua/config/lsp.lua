@@ -37,9 +37,10 @@ end
 -- map buffer local keybindings when the language server attaches
 local servers = {
 	'bashls',
-	'tsserver',
+	'clangd',
 	'gopls',
-	'pyright'
+	'pyright',
+	'tsserver'
 }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
