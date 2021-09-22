@@ -13,3 +13,10 @@ vim.api.nvim_set_keymap('n', '<Right>', '<cmd>vertical resize -2<CR>', {noremap 
 
 -- Explorer
 vim.api.nvim_set_keymap('n', '\\e', '<cmd>:NvimTreeToggle<CR>', {noremap = true})
+
+-- Telescope
+
+vim.api.nvim_set_keymap('n', '<leader>ff', ":lua require('telescope.builtin').find_files()<cr>", {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>fg', ":lua require('telescope.builtin').live_grep()<cr>", {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>fb', ":lua require('telescope.builtin').buffers()<cr>", {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>fh', ":lua require('telescope.builtin').help_tags()<cr>", {noremap = true})
