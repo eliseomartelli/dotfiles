@@ -58,3 +58,5 @@ opt.splitright = true
 
 -- Copleteopt
 opt.completeopt = 'menuone,noselect'
+
+require'nvim-tree'.setup()

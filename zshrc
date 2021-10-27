@@ -106,3 +106,5 @@ alias u="cd ~/Documents/University"
 
 autoload -U compinit
 compinit -i
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

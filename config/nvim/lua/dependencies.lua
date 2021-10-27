@@ -36,5 +36,8 @@ require "paq" {
 
 	-- cheat.sh.
 	"dbeniamine/cheat.sh-vim";
+
+	--lualine.
+	'nvim-lualine/lualine.nvim';
 }
 
