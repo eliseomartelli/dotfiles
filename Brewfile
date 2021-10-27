@@ -27,7 +27,6 @@ cask "firefox"
 cask "font-meslo-lg-nerd-font"
 cask "handbrake"
 cask "hiddenbar"
-cask "hot"
 cask "iina"
 cask "keepingyouawake"
 cask "keka"
@@ -46,6 +45,7 @@ mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
+mas "Scenecuts Helper", id: 1540491573
 mas "Telegram", id: 747648890
 mas "Twitter", id: 1482454543
 mas "Vectornator", id: 1219074514
