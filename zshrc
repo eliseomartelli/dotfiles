@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -108,3 +108,18 @@ autoload -U compinit
 compinit -i
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+
+function ta() {
+	if [ -n "$1" ];
+		then tmux a -t $1;
+		else echo "Please specify session to attach.";
+	fi
+}
+
+function _ta() {
+	reply=( $(tmux list-sessions | cut -d: -f1) )
+}
+
+compctl -K _ta ta
