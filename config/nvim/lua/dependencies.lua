@@ -39,5 +39,8 @@ require "paq" {
 
 	--lualine.
 	'nvim-lualine/lualine.nvim';
+
+  -- formatter.
+  'mhartington/formatter.nvim';
 }
 

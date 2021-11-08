@@ -60,3 +60,4 @@ opt.splitright = true
 opt.completeopt = 'menuone,noselect'
 
 require'nvim-tree'.setup()
+require'formatter'.setup()

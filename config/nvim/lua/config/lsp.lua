@@ -38,6 +38,7 @@ end
 local servers = {
 	'bashls',
 	'clangd',
+	'dartls',
 	'gopls',
 	'pyright',
 	'tsserver',
