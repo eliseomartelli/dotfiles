@@ -1,0 +1,26 @@
+<!--
+/Library/LaunchDaemons/it.eliseomartelli.brewupdate.plist
+sudo launchctl load -w /Library/LaunchDaemons/it.eliseomartelli.brewupdate.plist
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>it.eliseomartelli.brewupdate</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/eliseomartelli/Projects/dotfiles/brewupdater.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <false/>
+    <key>StartInterval</key>
+    <integer>21600</integer>
+	<key>StandardErrorPath</key>
+	<string>/dev/null</string>
+	<key>StandardOutPath</key>
+	<string>/dev/null</string>
+  </dict>
+</plist>
