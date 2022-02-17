@@ -31,3 +31,7 @@ defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
 # Scroll on dock icon to show open windows.
 defaults write com.apple.dock scroll-to-open -bool true
+
+# Set plain text default textedit file.
+defaults write com.apple.TextEdit RichText -bool false
+

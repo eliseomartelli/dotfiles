@@ -40,9 +40,10 @@ local servers = {
 	'clangd',
 	'dartls',
 	'gopls',
+	'intelephense',
 	'pyright',
 	'tsserver',
-	'psalm',
+  'cssls'
 }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {

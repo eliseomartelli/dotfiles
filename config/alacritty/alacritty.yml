@@ -11,3 +11,6 @@ font:
   size: 16
   normal:
     family: MesloLGL Nerd Font
+
+# key_bindings:
+#   - { key: Return, mods: Command, action: ToggleFullscreen }

@@ -15,7 +15,21 @@ sudo launchctl load -w /Library/LaunchDaemons/it.eliseomartelli.keyboard-remap.p
       <string>--matching</string>
       <string>{"ProductID":0x342}</string>
       <string>--set</string>
-      <string>{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000035,"HIDKeyboardModifierMappingDst":0x700000064},{"HIDKeyboardModifierMappingSrc":0x700000064,"HIDKeyboardModifierMappingDst":0x700000035}]}</string>
+      <string>
+        {
+          "UserKeyMapping":
+            [
+              {
+                "HIDKeyboardModifierMappingSrc":0x700000035,
+                "HIDKeyboardModifierMappingDst":0x700000064
+              },
+              {
+                "HIDKeyboardModifierMappingSrc":0x700000064,
+                "HIDKeyboardModifierMappingDst":0x700000035
+              }
+            ]
+        }
+      </string>
     </array>
     <key>RunAtLoad</key>
     <true/>
