@@ -23,5 +23,5 @@ require "paq" {
 
   "sbdchd/neoformat"; -- neoformat
 
-  "chriskempson/vim-tomorrow-theme"; --theme
+  "yazeed1s/minimal.nvim"; -- theme
 }

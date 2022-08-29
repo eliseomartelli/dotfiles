@@ -44,4 +44,4 @@ opt.nrformats = opt.nrformats + 'alpha'
 -- Undo.
 opt.undofile = true
 
-vim.cmd "colorscheme Tomorrow-Night"
+vim.cmd "colorscheme minimal-base16"
