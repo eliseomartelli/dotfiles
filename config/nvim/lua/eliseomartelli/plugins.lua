@@ -8,7 +8,8 @@ require "paq" {
   "hrsh7th/nvim-cmp"; -- Completion
 
   "neovim/nvim-lspconfig"; -- LSP
-  "williamboman/nvim-lsp-installer"; -- LSP installer
+  "williamboman/mason.nvim"; -- Mason
+  "williamboman/mason-lspconfig.nvim"; -- Mason LSP Config
 
   "jose-elias-alvarez/null-ls.nvim"; -- Neovim as a lsp
   "MunifTanjim/prettier.nvim"; -- prettier
