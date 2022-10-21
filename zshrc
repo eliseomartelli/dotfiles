@@ -122,6 +122,13 @@ function _ta() {
 	reply=( $(tmux list-sessions | cut -d: -f1) )
 }
 
+function tm() {
+	if [ -n "$1" ];
+		then tmux new -s $1;
+		else echo "Please specify session name.";
+	fi
+}
+
 
 function rga-fzf() {
 	RG_PREFIX="rga --files-with-matches"
