@@ -14,6 +14,7 @@ require "paq" {
   "MunifTanjim/prettier.nvim"; -- prettier
   "L3MON4D3/LuaSnip"; -- snippets
   "glepnir/lspsaga.nvim"; -- LSP UIs
+  "rafamadriz/friendly-snippets"; -- frielndlysnippets
 
   -- nvim-tree.
   "kyazdani42/nvim-tree.lua";
@@ -24,4 +25,7 @@ require "paq" {
   "sbdchd/neoformat"; -- neoformat
 
   "yazeed1s/minimal.nvim"; -- theme
+
+  "nvim-lua/plenary.nvim";
+  "nvim-telescope/telescope.nvim";
 }

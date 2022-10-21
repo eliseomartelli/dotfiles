@@ -37,6 +37,7 @@ opt.list = true
 opt.splitbelow = true
 opt.splitright = true
 opt.completeopt = 'menuone,noselect'
+opt.signcolumn = "yes"
 
 -- Increments.
 opt.nrformats = opt.nrformats + 'alpha'
