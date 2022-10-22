@@ -7,9 +7,9 @@ require "paq" {
   "hrsh7th/cmp-path"; -- Add support for path to nvim-cmp.
   "hrsh7th/nvim-cmp"; -- Completion
 
-  "neovim/nvim-lspconfig"; -- LSP
   "williamboman/mason.nvim"; -- Mason
   "williamboman/mason-lspconfig.nvim"; -- Mason LSP Config
+  "neovim/nvim-lspconfig"; -- LSP
 
   "jose-elias-alvarez/null-ls.nvim"; -- Neovim as a lsp
   "MunifTanjim/prettier.nvim"; -- prettier
