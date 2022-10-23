@@ -48,4 +48,4 @@ opt.nrformats = opt.nrformats + 'alpha'
 opt.undofile = true
 
 -- Colorscheme.
-vim.cmd "colorscheme minimal-base16"
+vim.cmd.colorscheme('minimal-base16')
