@@ -12,22 +12,6 @@ ts.setup {
   },
 }
 
--- local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
--- 
--- parser_config.tsx.filetype = {
---   "javascript",
---   "typescript.tsx",
---   "typescriptreact",
--- }
-
-
--- from: https://gist.github.com/jdrouhard/dccbb692e901d5e0a00a3a4c126079c6
--- This "undeprecates" the "TS..." highlight groups
--- from the treesitter highlight chain and fixes
--- colorschemes that have not yet been ported to the
--- new style @group highlights. Simply require this
--- file in your setup somewhere.
-
 local ts = vim.treesitter
 local api = vim.api
 

@@ -11,7 +11,6 @@ require "paq" {
   "williamboman/mason-lspconfig.nvim"; -- Mason LSP Config
   "neovim/nvim-lspconfig"; -- LSP
 
-  "jose-elias-alvarez/null-ls.nvim"; -- Neovim as a lsp
   "L3MON4D3/LuaSnip"; -- snippets
   "glepnir/lspsaga.nvim"; -- LSP UIs
   "rafamadriz/friendly-snippets"; -- frielndlysnippets
