@@ -1,5 +1,5 @@
 require "paq" {
-  "savq/paq-nvim";
+  "savq/paq-nvim"; -- paq
   "onsails/lspkind-nvim"; -- vscode-like pictograms
 
   "hrsh7th/cmp-buffer"; -- nvim-cmp source for buffer words
@@ -12,7 +12,6 @@ require "paq" {
   "neovim/nvim-lspconfig"; -- LSP
 
   "jose-elias-alvarez/null-ls.nvim"; -- Neovim as a lsp
-  "MunifTanjim/prettier.nvim"; -- prettier
   "L3MON4D3/LuaSnip"; -- snippets
   "glepnir/lspsaga.nvim"; -- LSP UIs
   "rafamadriz/friendly-snippets"; -- frielndlysnippets
@@ -27,6 +26,6 @@ require "paq" {
 
   "yazeed1s/minimal.nvim"; -- theme
 
-  "nvim-lua/plenary.nvim";
-  "nvim-telescope/telescope.nvim";
+  "nvim-lua/plenary.nvim"; -- plenary
+  "nvim-telescope/telescope.nvim"; -- telescope
 }
