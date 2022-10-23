@@ -1,3 +1,5 @@
+-- Base configurations.
+
 local opt = vim.opt
 
 -- Ability to hide a buffer.
@@ -45,4 +47,5 @@ opt.nrformats = opt.nrformats + 'alpha'
 -- Undo.
 opt.undofile = true
 
+-- Colorscheme.
 vim.cmd "colorscheme minimal-base16"
