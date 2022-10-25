@@ -41,4 +41,5 @@ require "paq" {
   "onsails/lspkind-nvim"; -- vscode-like pictograms
   "yazeed1s/minimal.nvim"; -- theme
   "nvim-telescope/telescope.nvim"; -- telescope
+  "lewis6991/impatient.nvim";
 }
