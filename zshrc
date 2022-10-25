@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/eliseomartelli/.oh-my-zsh"
+export ZSH="$XDG_DATA_HOME"/oh-my-zsh
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -103,6 +103,7 @@ source $ZSH/oh-my-zsh.sh
 
 alias p="cd ~/Projects"
 alias u="cd ~/Documents/University"
+alias yarn="yarn --use-yarnrc $XDG_CONFIG_HOME/yarn/config"
 
 autoload -U compinit
 compinit -i
