@@ -18,9 +18,9 @@ defaults write com.apple.Dock showhidden -bool yes
 # Set dock autohide.
 defaults write com.apple.dock autohide -bool true
 
-# Set screenshot location to ~/Screenshots.
-mkdir -p ~/Screenshots
-defaults write com.apple.screencapture "location" -string "~/Screenshots"
+# Set screenshot location to ~/Pictures/Screenshots.
+mkdir -p ~/Pictures/Screenshots
+defaults write com.apple.screencapture "location" -string "~/Pictures/Screenshots"
 
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
