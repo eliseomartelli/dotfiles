@@ -130,6 +130,15 @@ function tm() {
 	fi
 }
 
+function  t() {
+	if [ -n "$1" ];
+		then
+			tm $1 > /dev/null 2>&1 || ta $1
+		else
+			echo "Please specify session name.";
+	fi
+}
+
 
 function rga-fzf() {
 	RG_PREFIX="rga --files-with-matches"
@@ -146,3 +155,4 @@ function rga-fzf() {
 }
 
 compctl -K _ta ta
+compctl -K _ta t
