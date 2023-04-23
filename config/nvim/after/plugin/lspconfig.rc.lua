@@ -19,7 +19,7 @@ mason_lspconfig.setup_handlers({
 })
 
 -- Custom configurations.
-lspconfig.sumneko_lua.setup{
+lspconfig.lua_ls.setup{
     settings = {
         Lua = {
             diagnostics = {

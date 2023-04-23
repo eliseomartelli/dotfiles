@@ -139,7 +139,6 @@ function  t() {
 	fi
 }
 
-
 function rga-fzf() {
 	RG_PREFIX="rga --files-with-matches"
 	local file
@@ -154,5 +153,13 @@ function rga-fzf() {
 	open "$file"
 }
 
+function goentrtest() {
+	entr bash -c "clear; go test $*" < <(find .)
+}
+
 compctl -K _ta ta
 compctl -K _ta t
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/eliseomartelli/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

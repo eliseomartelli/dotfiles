@@ -3,13 +3,13 @@ require "paq" {
   "savq/paq-nvim"; -- paq
 
   -- Completion related packages.
+  "davidsierradz/cmp-conventionalcommits"; -- conventionalcommits
   "hrsh7th/cmp-buffer"; -- nvim-cmp source for buffer words
+  "hrsh7th/cmp-cmdline"; -- Add support for cmdline to nvim-cmp.
   "hrsh7th/cmp-nvim-lsp"; -- nvim-cmp source for neovim's built-in LSP
   "hrsh7th/cmp-path"; -- Add support for path to nvim-cmp.
-  "hrsh7th/cmp-cmdline"; -- Add support for cmdline to nvim-cmp.
   "hrsh7th/nvim-cmp"; -- Completion
   "petertriho/cmp-git"; -- Cmp git.
-  "davidsierradz/cmp-conventionalcommits"; -- conventionalcommits
   "saadparwaiz1/cmp_luasnip"; -- LuaSnip cmp.
 
   -- LSP install and configuration.
@@ -37,9 +37,11 @@ require "paq" {
   -- Utils.
   "nvim-lua/plenary.nvim"; -- plenary
 
+  -- Telescope.
+  "nvim-telescope/telescope.nvim";
+
   -- Misc.
   "onsails/lspkind-nvim"; -- vscode-like pictograms
-  "yazeed1s/minimal.nvim"; -- theme
-  "nvim-telescope/telescope.nvim"; -- telescope
+  -- "yazeed1s/minimal.nvim"; -- theme
   "lewis6991/impatient.nvim";
 }

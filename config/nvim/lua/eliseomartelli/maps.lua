@@ -19,3 +19,9 @@ keymap('n', '<Right>', '<cmd>vertical resize -2<CR>')
 -- ESC to clear highlight.
 keymap("n", "<Esc>", ":noh<CR>")
 
+-- telescope.
+local builtin = require('telescope.builtin')
+keymap('n', '<leader>ff', builtin.find_files, {})
+keymap('n', '<leader>fg', builtin.live_grep, {})
+keymap('n', '<leader>fb', builtin.buffers, {})
+keymap('n', '<leader>fh', builtin.help_tags, {})

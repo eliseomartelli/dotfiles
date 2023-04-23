@@ -24,7 +24,7 @@ opt.path = opt.path + '**'
 opt.backspace = 'indent,eol,start'
 
 -- Visuals.
-opt.termguicolors = true
+opt.termguicolors = false
 opt.ruler = true
 opt.confirm = true
 opt.mouse = 'a'
@@ -48,4 +48,6 @@ opt.nrformats = opt.nrformats + 'alpha'
 opt.undofile = true
 
 -- Colorscheme.
-vim.cmd.colorscheme('minimal-base16')
+-- vim.cmd.colorscheme('torte')
+
+vim.opt.background = "light"
