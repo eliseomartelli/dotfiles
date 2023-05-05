@@ -1,2 +1,3 @@
 fn - g : skhd -k 'cmd - c'; open "https://www.google.ro/search?q=$(pbpaste)"
 
+fn - i : shortcuts run "Toggle Principale"

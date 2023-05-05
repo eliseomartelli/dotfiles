@@ -109,6 +109,7 @@ autoload -U compinit
 compinit -i
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 
@@ -137,20 +138,6 @@ function  t() {
 		else
 			echo "Please specify session name.";
 	fi
-}
-
-function rga-fzf() {
-	RG_PREFIX="rga --files-with-matches"
-	local file
-	file="$(
-		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
-			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
-				--phony -q "$1" \
-				--bind "change:reload:$RG_PREFIX {q}" \
-				--preview-window="70%:wrap"
-	)" &&
-	echo "opening $file" &&
-	open "$file"
 }
 
 function goentrtest() {

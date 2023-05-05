@@ -18,7 +18,7 @@ require "paq" {
   "neovim/nvim-lspconfig"; -- LSP
 
   -- LSP UI.
-  "glepnir/lspsaga.nvim"; -- LSP UI
+  "nvimdev/lspsaga.nvim"; -- LSP UI
 
   -- Snippet manager.
   "rafamadriz/friendly-snippets"; -- frielndlysnippets
@@ -29,7 +29,7 @@ require "paq" {
   "kyazdani42/nvim-web-devicons";
 
   -- Treesitter.
-  { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' };
+  'nvim-treesitter/nvim-treesitter';
 
   -- Code formatter.
   "sbdchd/neoformat"; -- neoformat

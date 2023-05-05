@@ -1,5 +1,14 @@
 local ts = require("nvim-treesitter.configs")
 
+-- support mdx
+vim.filetype.add({
+  extension = {
+    mdx = 'mdx'
+  }
+})
+
+vim.treesitter.language.register('markdown', 'mdx')
+
 ts.setup {
   highlight = {
     enable = true,
