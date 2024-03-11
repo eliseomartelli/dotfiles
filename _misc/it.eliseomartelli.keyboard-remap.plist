@@ -1,0 +1,39 @@
+<!--
+/Library/LaunchDaemons/it.eliseomartelli.keyboard-remap.plist
+sudo launchctl load -w /Library/LaunchDaemons/it.eliseomartelli.keyboard-remap.plist
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>org.custom.keyboard-remap</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/bin/hidutil</string>
+      <string>property</string>
+      <string>--matching</string>
+      <string>{"ProductID":0x342}</string>
+      <string>--set</string>
+      <string>
+        {
+          "UserKeyMapping":
+            [
+              {
+                "HIDKeyboardModifierMappingSrc":0x35,
+                "HIDKeyboardModifierMappingDst":0x64
+              },
+              {
+                "HIDKeyboardModifierMappingSrc":0x64,
+                "HIDKeyboardModifierMappingDst":0x35
+              }
+            ]
+        }
+      </string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <false/>
+  </dict>
+</plist>

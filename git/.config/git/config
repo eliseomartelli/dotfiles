@@ -1,0 +1,19 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Eliseo Martelli
+	email = me@eliseomartelli.it
+	signingkey = 9560E7AF90F0E1B9
+[commit]
+	gpgsign = true
+[gpg]
+	program = gpg
+[init]
+	defaultBranch = main
+[alias]
+	adog = log --all --decorate --oneline --graph
+	dog = log --decorate --oneline --graph
+	pushall = !git remote | xargs -L1 git push --all
+[push]
+	followTags = true
+[gc]
+	auto = 1

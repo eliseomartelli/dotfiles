@@ -1,8 +1,0 @@
-#!/bin/bash
-
-tmux rename-window "Editor"
-tmux new-window -n "Build"
-tmux split-window -h
-tmux select-pane -t 0
-tmux new-window -n "Docs"
-tmux select-window -t "Editor"
