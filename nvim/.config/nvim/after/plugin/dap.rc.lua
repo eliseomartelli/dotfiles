@@ -2,7 +2,8 @@
 -- https://github.com/mfussenegger/nvim-dap
 local dap = require("dap")
 
--- Adapters
+require("dap.ext.vscode").load_launchjs(nil, { delve = { "go" } })
+
 dap.adapters.delve = {
 	type = "server",
 	port = "${port}",
@@ -12,7 +13,6 @@ dap.adapters.delve = {
 	},
 }
 
--- Configurations
 -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
 dap.configurations.go = {
 	{
