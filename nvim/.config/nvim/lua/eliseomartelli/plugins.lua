@@ -47,5 +47,6 @@ require("paq")({
 
 	-- Debug Adapter
 	"mfussenegger/nvim-dap",
+	"nvim-neotest/nvim-nio",
 	"rcarriga/nvim-dap-ui",
 })
