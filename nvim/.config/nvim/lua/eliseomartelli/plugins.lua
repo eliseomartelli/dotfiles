@@ -40,6 +40,7 @@ require("paq")({
 	"kana/vim-textobj-user",
 	"GCBallesteros/vim-textobj-hydrogen",
 	"lewis6991/gitsigns.nvim",
+	"folke/which-key.nvim",
 
 	-- Fancy UI stuff.
 	"onsails/lspkind-nvim",
