@@ -15,10 +15,10 @@ keymap("n", "<Left>", "<cmd>vertical resize +2<CR>")
 keymap("n", "<Right>", "<cmd>vertical resize -2<CR>")
 
 -- ESC to clear highlight.
-keymap("n", "<Esc>", ":noh<CR>")
+keymap("n", "<Esc>", ":noh<CR>", { desc = "Clear highlight." })
 
 -- Open debugger.
-keymap("n", "<leader>s", '<cmd>:lua require("dapui").toggle()<cr>')
+keymap("n", "<leader>s", '<cmd>:lua require("dapui").toggle()<cr>', { desc = "Open debugger." })
 
 keymap("n", "<A-d>", "<cmd>Lspsaga term_toggle")
 

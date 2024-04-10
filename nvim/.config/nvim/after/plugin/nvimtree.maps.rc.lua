@@ -2,4 +2,4 @@
 local keymap = vim.keymap.set
 
 -- nvim tree toggle.
-keymap("n", "<Leader>e", ":NvimTreeToggle<cr>")
+keymap("n", "<Leader>e", ":NvimTreeToggle<cr>", { desc = "Open tree." })
