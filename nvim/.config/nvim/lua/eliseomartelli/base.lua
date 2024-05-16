@@ -43,3 +43,6 @@ opt.nrformats = opt.nrformats + "alpha"
 
 -- Undo.
 opt.undofile = true
+
+-- Colorscheme.
+vim.cmd([[colorscheme vim]])

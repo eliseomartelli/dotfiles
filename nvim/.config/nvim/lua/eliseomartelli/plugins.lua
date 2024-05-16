@@ -33,7 +33,6 @@ require("paq")({
 
 	-- Utils.
 	"nvim-lua/plenary.nvim",
-	"numToStr/Comment.nvim",
 	"nvim-telescope/telescope.nvim",
 	"GCBallesteros/jupytext.nvim",
 	"Vigemus/iron.nvim",
