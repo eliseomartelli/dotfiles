@@ -39,6 +39,9 @@ vim.opt.colorcolumn = "80"
 -- Ask for confirmations.
 vim.opt.confirm = true
 
+-- Default tabstop.
+vim.opt.tabstop = 4
+
 -- Colorscheme.
 vim.cmd([[colorscheme vim]])
 
@@ -80,7 +83,8 @@ require "paq" {
   { "neovim/nvim-lspconfig" },
 
   -- Snippet engine.
-  { "L3MON4D3/LuaSnip" },
+  { "L3MON4D3/LuaSnip",
+    build = "make install_jsregexp" },
   { "saadparwaiz1/cmp_luasnip" },
 
   -- LSP completion.
@@ -318,3 +322,7 @@ keymap({ "n", "v" }, "<leader>ca",
 keymap("n", "gr", vim.lsp.buf.rename, { desc = "Rename" })
 keymap("n", "gd", telescope.lsp_definitions, { desc = "Define" })
 keymap('n', '<leader>fd', telescope.diagnostics, { desc = 'Find diagnostics.' })
+keymap("n", 'gu', telescope.lsp_references, { desc = 'Usages' })
+keymap("n", '<leader>D', telescope.lsp_type_definitions, { desc = 'Definition for type.' })
+keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
+keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
