@@ -103,6 +103,7 @@ source $ZSH/oh-my-zsh.sh
 
 alias p="~/Projects"
 alias w="~/Projects/work/"
+alias ic="~/Library/Mobile\ Documents/com~apple~CloudDocs"
 alias u="~/Documents/University/master/"
 alias yarn="yarn --use-yarnrc $XDG_CONFIG_HOME/yarn/config"
 
