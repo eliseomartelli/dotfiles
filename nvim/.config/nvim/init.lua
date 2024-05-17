@@ -1,3 +1,320 @@
--- Entry point for neovim configuration.
+local keymap = vim.keymap.set
+
+-- Cache modules.
 vim.loader.enable()
-require("eliseomartelli")
+
+-- Display tabs and spaces.
+vim.opt.list = true
+
+-- Highlight on search.
+vim.opt.hlsearch = true
+
+-- Show relative line numbers.
+vim.opt.number = true
+vim.opt.relativenumber = true
+
+-- Enable mouse.
+vim.opt.mouse = 'a'
+
+-- Case insensitive search.
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
+-- Show signcolumn.
+vim.opt.signcolumn = 'yes'
+
+-- Decrease mapped sequence wait time.
+vim.opt.timeout = true
+vim.opt.timeoutlen = 300
+
+-- Set completeopt to have a better completion experience.
+vim.opt.completeopt = 'menuone,noselect'
+
+-- Show ruler.
+vim.opt.ruler = true
+
+-- Show column at 80 characters.
+vim.opt.colorcolumn = "80"
+
+-- Ask for confirmations.
+vim.opt.confirm = true
+
+-- Colorscheme.
+vim.cmd([[colorscheme vim]])
+
+-- Disable space in normal and visual mode.
+keymap({ 'n', 'v' }, '<space>', '<nop>', { silent = true })
+
+-- Resize panes using arrows.
+keymap('n', '<left>', '<cmd>vertical resize +2<CR>')
+keymap('n', '<right>', '<cmd>vertical resize -2<CR>')
+keymap('n', '<down>', '<cmd>horizontal resize +2<CR>')
+keymap('n', '<up>', '<cmd>horizontal resize -2<CR>')
+
+-- Diagnostics.
+keymap('n', '[d', vim.diagnostic.goto_prev,
+  { desc = 'Go to previous diagnostic message' })
+keymap('n', ']d', vim.diagnostic.goto_next,
+  { desc = 'Go to next diagnostic message' })
+keymap('n', '<leader>of', vim.diagnostic.open_float,
+  { desc = 'Open floating diagnostic message' })
+keymap('n', '<leader>q', vim.diagnostic.setloclist,
+  { desc = 'Open diagnostics list' })
+
+-- Search highlight.
+keymap('n', '<esc>', ":noh<CR>")
+
+-- Packages.
+require "paq" {
+  -- Package manager.
+  { "savq/paq-nvim" },
+
+  -- Tabstop and shiftwidth.
+  { "tpope/vim-sleuth" },
+
+  -- LSP.
+  { "williamboman/mason.nvim" },
+  { "williamboman/mason-lspconfig.nvim" },
+  { "j-hui/fidget.nvim" },
+  { "folke/neodev.nvim" },
+  { "neovim/nvim-lspconfig" },
+
+  -- Snippet engine.
+  { "L3MON4D3/LuaSnip" },
+  { "saadparwaiz1/cmp_luasnip" },
+
+  -- LSP completion.
+  { "hrsh7th/cmp-nvim-lsp" },
+  { "hrsh7th/cmp-path" },
+  { "hrsh7th/cmp-buffer" },
+
+  -- Friendly snippets.
+  { "rafamadriz/friendly-snippets" },
+
+  -- Completion.
+  { "hrsh7th/nvim-cmp" },
+
+  -- Pending keybinds.
+  { "folke/which-key.nvim" },
+
+  -- Show git.
+  { "lewis6991/gitsigns.nvim" },
+
+  -- Plenary.
+  { "nvim-lua/plenary.nvim" },
+
+  -- Telescope.
+  { "nvim-telescope/telescope.nvim" },
+
+  -- Lspkind.
+  { "onsails/lspkind-nvim" },
+
+  -- Nvim-tree.
+  { "nvim-tree/nvim-tree.lua" },
+
+  -- Treesitter.
+  { "nvim-treesitter/nvim-treesitter" },
+
+  -- Dev icons.
+  { "kyazdani42/nvim-web-devicons" },
+
+  -- Formatter.
+  { "stevearc/conform.nvim" },
+  { "zapling/mason-conform.nvim" },
+
+  -- Debug Adapter
+  { "mfussenegger/nvim-dap" },
+  { "nvim-neotest/nvim-nio" },
+  { "rcarriga/nvim-dap-ui" },
+}
+
+
+-- Mason.
+require("mason").setup {}
+
+local mason_lspconfig = require("mason-lspconfig")
+mason_lspconfig.setup {}
+
+-- Fidget.
+require('fidget').setup {}
+
+-- Neodev.
+require("neodev").setup {}
+
+-- Luasnip.
+require("luasnip.loaders.from_vscode").lazy_load()
+
+-- CMP.
+local cmp = require("cmp")
+local luasnip = require("luasnip")
+local lspkind = require('lspkind')
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  window = {},
+  mapping = cmp.mapping.preset.insert({
+    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-e>"] = cmp.mapping.abort(),
+    -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+    { name = 'path' },
+    { name = 'buffer' },
+  }),
+  formatting = {
+    format = lspkind.cmp_format({
+      mode = 'symbol', -- show only symbol annotations
+      maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      -- can also be a function to dynamically calculate max width such as
+      -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
+      ellipsis_char = '...',    -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+      show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+      -- The function below will be called before any actual modifications from lspkind
+      -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+      before = function(_, vim_item)
+        return vim_item
+      end
+    })
+  }
+})
+
+-- CMP lsp.
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+local lspconfig = require("lspconfig")
+
+mason_lspconfig.setup_handlers({
+  function(server_name) -- default handler (optional)
+    lspconfig[server_name].setup({ capabilities = capabilities })
+  end, })
+
+lspconfig.lua_ls.setup({
+  settings = {
+    Lua = {
+      completion = {
+        callSnippet = "Replace"
+      }
+    }
+  }
+})
+
+-- Which key.
+require("which-key").setup({})
+
+-- Gitsigns.
+require('gitsigns').setup({
+  signs = {
+    add = { text = "+" },
+    change = { text = "~" },
+    delete = { text = "_" },
+    topdelete = { text = "‾" },
+    changedelete = { text = "~" },
+  },
+})
+
+-- Telescope.
+local telescope = require("telescope.builtin")
+
+keymap('n', '<leader>ff', telescope.find_files, { desc = "Find files" })
+keymap('n', '<leader>fg', telescope.live_grep, { desc = "Live grep files" })
+keymap('n', '<leader>fb', telescope.buffers, { desc = "Find buffers" })
+keymap('n', '<leader>fh', telescope.help_tags, { desc = "Find in help" })
+
+-- Nvim tree.
+require("nvim-tree").setup()
+
+keymap('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = "Toggle tree" })
+
+-- Conform.
+require("conform").setup({
+  format_on_save = {
+    lsp_fallback = true,
+    timeout_ms = 500,
+  }
+})
+require("mason-conform").setup()
+
+-- DAP.
+local dap = require("dap")
+
+require("dap.ext.vscode").load_launchjs(nil, { delve = { "go" } })
+
+dap.adapters.delve = {
+  type = "server",
+  port = "${port}",
+  executable = {
+    command = "dlv",
+    args = { "dap", "-l", "127.0.0.1:${port}" },
+  },
+}
+
+-- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
+dap.configurations.go = {
+  {
+    type = "delve",
+    name = "Debug",
+    request = "launch",
+    program = "${file}",
+  },
+  {
+    type = "delve",
+    name = "Debug test", -- configuration for debugging test files
+    request = "launch",
+    mode = "test",
+    program = "${file}",
+  },
+  -- works with go.mod packages and sub packages
+  {
+    type = "delve",
+    name = "Debug test (go.mod)",
+    request = "launch",
+    mode = "test",
+    program = "./${relativeFileDirname}",
+  },
+}
+
+-- Treesitter.
+require("nvim-treesitter.configs").setup({
+  highlight = { enable = true },
+})
+
+-- Dap UI
+require("dapui").setup()
+
+local widgets = require("dap.ui.widgets")
+
+keymap("n", "<F5>", dap.continue)
+keymap("n", "<F10>", dap.step_over)
+keymap("n", "<F11>", dap.step_into)
+keymap("n", "<F12>", dap.step_out)
+keymap("n", "<Leader>b", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+keymap("n", "<Leader>B", dap.set_breakpoint, { desc = "Set breakpoint" })
+keymap("n", "<Leader>lp", function()
+  dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+end, { desc = "Logpoint message" })
+keymap("n", "<Leader>dr", dap.repl.open, { desc = "Open repl" })
+keymap("n", "<Leader>dl", dap.run_last, { desc = "Run last" })
+keymap({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
+keymap({ "n", "v" }, "<Leader>dp", widgets.preview, { desc = "Preview" })
+keymap("n", "<Leader>df", function()
+  widgets.centered_float(widgets.frames)
+end, { desc = "Show frames" })
+keymap("n", "<Leader>ds", function()
+  widgets.centered_float(widgets.scopes)
+end, { desc = "Show scopes" })
+
+-- LSP.
+keymap({ "n", "v" }, "<leader>ca",
+  vim.lsp.buf.code_action, { desc = "Code action." })
+keymap("n", "gr", vim.lsp.buf.rename, { desc = "Rename" })
+keymap("n", "gd", telescope.lsp_definitions, { desc = "Define" })
+keymap('n', '<leader>fd', telescope.diagnostics, { desc = 'Find diagnostics.' })
