@@ -42,6 +42,9 @@ vim.opt.confirm = true
 -- Default tabstop.
 vim.opt.tabstop = 4
 
+-- Increment alpha and octals.
+vim.opt.nrformats:append({ 'alpha', 'octal', 'hex', 'bin' })
+
 -- Colorscheme.
 vim.cmd([[colorscheme vim]])
 
