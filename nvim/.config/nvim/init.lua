@@ -42,11 +42,24 @@ vim.opt.confirm = true
 -- Default tabstop.
 vim.opt.tabstop = 4
 
+-- Default colorscheme.
+vim.cmd [[colorscheme vim]]
+
 -- Increment alpha and octals.
 vim.opt.nrformats:append({ 'alpha', 'octal', 'hex', 'bin' })
 
--- Colorscheme.
-vim.cmd([[colorscheme vim]])
+-- Disable showmode (Statusline has already it).
+vim.opt.showmode = false
+
+-- Highlight when yanking text.
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank',
+    { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
 
 -- Disable space in normal and visual mode.
 keymap({ 'n', 'v' }, '<space>', '<nop>', { silent = true })
@@ -58,10 +71,6 @@ keymap('n', '<down>', '<cmd>horizontal resize +2<CR>')
 keymap('n', '<up>', '<cmd>horizontal resize -2<CR>')
 
 -- Diagnostics.
--- keymap('n', '[d', vim.diagnostic.goto_prev,
---   { desc = 'Go to previous diagnostic message' })
--- keymap('n', ']d', vim.diagnostic.goto_next,
---   { desc = 'Go to next diagnostic message' })
 keymap('n', '<leader>of', vim.diagnostic.open_float,
   { desc = 'Open floating diagnostic message' })
 keymap('n', '<leader>q', vim.diagnostic.setloclist,
@@ -133,6 +142,9 @@ require "paq" {
   { "mfussenegger/nvim-dap" },
   { "nvim-neotest/nvim-nio" },
   { "rcarriga/nvim-dap-ui" },
+
+  -- Statusline.
+  { "echasnovski/mini.statusline" },
 }
 
 
@@ -169,7 +181,10 @@ cmp.setup({
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.abort(),
     -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    ["<C-y>"] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = false
+    }),
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -291,7 +306,9 @@ dap.configurations.go = {
 
 -- Treesitter.
 require("nvim-treesitter.configs").setup({
+  auto_install = true,
   highlight = { enable = true },
+  indent = { enable = true },
 })
 
 -- Dap UI
@@ -319,6 +336,15 @@ keymap("n", "<Leader>ds", function()
   widgets.centered_float(widgets.scopes)
 end, { desc = "Show scopes" })
 
+-- Statusline.
+local statusline = require('mini.statusline')
+statusline.setup()
+
+-- Disable line information in statusline.
+statusline.section_location = function()
+  return ''
+end
+
 -- LSP.
 keymap({ "n", "v" }, "<leader>ca",
   vim.lsp.buf.code_action, { desc = "Code action." })
@@ -327,5 +353,5 @@ keymap("n", "gd", telescope.lsp_definitions, { desc = "Define" })
 keymap('n', '<leader>fd', telescope.diagnostics, { desc = 'Find diagnostics.' })
 keymap("n", 'gu', telescope.lsp_references, { desc = 'Usages' })
 keymap("n", '<leader>D', telescope.lsp_type_definitions, { desc = 'Definition for type.' })
-keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
-keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
+keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = 'Document Symbols' })
+keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = 'Workspace Symbols' })

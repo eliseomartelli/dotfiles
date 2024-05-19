@@ -17,3 +17,5 @@
 	followTags = true
 [gc]
 	auto = 1
+[merge]
+	tool = nvimdiff
