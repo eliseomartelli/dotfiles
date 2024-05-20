@@ -125,8 +125,8 @@ require "paq" {
   -- Lspkind.
   { "onsails/lspkind-nvim" },
 
-  -- Nvim-tree.
-  { "nvim-tree/nvim-tree.lua" },
+  -- Netrw.
+  { "prichrd/netrw.nvim" },
 
   -- Treesitter.
   { "nvim-treesitter/nvim-treesitter" },
@@ -251,10 +251,33 @@ keymap('n', '<leader>fg', telescope.live_grep, { desc = "Live grep files" })
 keymap('n', '<leader>fb', telescope.buffers, { desc = "Find buffers" })
 keymap('n', '<leader>fh', telescope.help_tags, { desc = "Find in help" })
 
--- Nvim tree.
-require("nvim-tree").setup()
+-- Netrw
+require("netrw").setup()
 
-keymap('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = "Toggle tree" })
+vim.g.netrw_banner = 0       -- Disable banner.
+vim.g.netrw_liststyle = 3    -- Tree style listing.
+
+vim.g.netrw_altv = 1         -- Left vertical split.
+vim.g.netrw_browse_split = 4 -- Open files in last open buffer.
+vim.g.netrw_preview = 1      -- Enable preview window (vertical).
+
+vim.g.netrw_winsize = 0      -- Normal split.
+
+function ToggleNetrw()
+  -- Check if Netrw is already open
+  if vim.g.split_netrw_bufnr then
+    -- Close Netrw.
+    vim.cmd('bwipeout ' .. vim.g.split_netrw_bufnr)
+    vim.g.split_netrw_bufnr = nil
+  else
+    -- Open Netrw.
+    vim.cmd [[Lexplore]]
+    vim.cmd [[vertical resize 30]] -- Set size of netrw.
+    vim.g.split_netrw_bufnr = vim.fn.bufnr()
+  end
+end
+
+keymap('n', '<leader>e', ToggleNetrw, { desc = "Toggle Netrw" })
 
 -- Conform.
 require("conform").setup({
