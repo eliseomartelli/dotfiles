@@ -42,14 +42,14 @@ vim.opt.confirm = true
 -- Default tabstop.
 vim.opt.tabstop = 4
 
--- Default colorscheme.
-vim.cmd [[colorscheme vim]]
-
 -- Increment alpha and octals.
 vim.opt.nrformats:append({ 'alpha', 'octal', 'hex', 'bin' })
 
 -- Disable showmode (Statusline has already it).
 vim.opt.showmode = false
+
+-- Set colorscheme.
+vim.cmd [[colorscheme wildcharm]]
 
 -- Highlight when yanking text.
 vim.api.nvim_create_autocmd('TextYankPost', {
