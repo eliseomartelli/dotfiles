@@ -90,9 +90,12 @@ require "paq" {
   -- LSP.
   { "williamboman/mason.nvim" },
   { "williamboman/mason-lspconfig.nvim" },
-  { "j-hui/fidget.nvim" },
   { "folke/neodev.nvim" },
   { "neovim/nvim-lspconfig" },
+
+
+  -- Notifications.
+  { "j-hui/fidget.nvim" },
 
   -- Snippet engine.
   { "L3MON4D3/LuaSnip",
