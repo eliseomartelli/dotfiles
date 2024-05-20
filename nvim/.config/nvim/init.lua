@@ -110,7 +110,7 @@ require "paq" {
   { "hrsh7th/cmp-path" },
   { "hrsh7th/cmp-buffer" },
 
-  -- Friendly snippets.
+  -- Snippets.
   { "rafamadriz/friendly-snippets" },
 
   -- Completion.
@@ -189,7 +189,7 @@ cmp.setup({
     -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ["<C-y>"] = cmp.mapping.confirm({
       behavior = cmp.ConfirmBehavior.Insert,
-      select = false
+      select = true
     }),
   }),
   sources = cmp.config.sources({
