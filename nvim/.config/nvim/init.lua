@@ -93,6 +93,9 @@ require "paq" {
   { "folke/neodev.nvim" },
   { "neovim/nvim-lspconfig" },
 
+  -- Show codeactions.
+  { "kosayoda/nvim-lightbulb" },
+
 
   -- Notifications.
   { "j-hui/fidget.nvim" },
@@ -381,3 +384,8 @@ keymap("n", 'gu', telescope.lsp_references, { desc = 'Usages' })
 keymap("n", '<leader>D', telescope.lsp_type_definitions, { desc = 'Definition for type.' })
 keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = 'Document Symbols' })
 keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = 'Workspace Symbols' })
+
+-- Show codeactions.
+require("nvim-lightbulb").setup({
+  autocmd = { enabled = true }
+})
