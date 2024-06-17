@@ -122,6 +122,14 @@ function ta() {
 	fi
 }
 
+alias rws="reminders show Worktree"
+alias rwa="reminders add Worktree"
+alias rwc="reminders complete Worktree"
+
+function _rwc() {
+	reply=( $(reminders show Worktree | grep -E -o  -i '^[0-9]+'))
+}
+
 function _ta() {
 	reply=( $(tmux list-sessions | cut -d: -f1) )
 }
@@ -144,7 +152,7 @@ function  t() {
 }
 
 function goentrtest() {
-	entr bash -c "clear; go test $* -cover" < <(find .)
+	entr bash -c "clear; go test -v $* -cover" < <(find .)
 }
 
 compctl -K _ta ta
