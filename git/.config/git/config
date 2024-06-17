@@ -15,7 +15,10 @@
 	pushall = !git remote | xargs -L1 git push --all
 [push]
 	followTags = true
-[gc]
-	auto = 1
 [merge]
 	tool = nvimdiff
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
