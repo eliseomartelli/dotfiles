@@ -116,9 +116,6 @@ require "paq" {
   -- Completion.
   { "hrsh7th/nvim-cmp" },
 
-  -- Pending keybinds.
-  { "folke/which-key.nvim" },
-
   -- Show git.
   { "lewis6991/gitsigns.nvim" },
 
@@ -127,12 +124,13 @@ require "paq" {
 
   -- Telescope.
   { "nvim-telescope/telescope.nvim" },
+  { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 
   -- Lspkind.
   { "onsails/lspkind-nvim" },
 
-  -- Netrw.
-  { "prichrd/netrw.nvim" },
+  -- Nvim tree.
+  { "nvim-tree/nvim-tree.lua" },
 
   -- Treesitter.
   { "nvim-treesitter/nvim-treesitter" },
@@ -151,6 +149,12 @@ require "paq" {
 
   -- Statusline.
   { "echasnovski/mini.statusline" },
+
+  -- Pending keybinds.
+  { "folke/which-key.nvim" },
+
+  -- Git.
+  { 'tpope/vim-fugitive' },
 }
 
 
@@ -186,7 +190,8 @@ cmp.setup({
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.abort(),
-    -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    -- Accept currently selected item.
+    -- Set `select` to `false` to only confirm explicitly selected items.
     ["<C-y>"] = cmp.mapping.confirm({
       behavior = cmp.ConfirmBehavior.Insert,
       select = true
@@ -235,8 +240,8 @@ lspconfig.lua_ls.setup({
   }
 })
 
--- Which key.
-require("which-key").setup({})
+-- mini.clue.
+require("which-key").setup()
 
 -- Gitsigns.
 require('gitsigns').setup({
@@ -257,33 +262,8 @@ keymap('n', '<leader>fg', telescope.live_grep, { desc = "Live grep files" })
 keymap('n', '<leader>fb', telescope.buffers, { desc = "Find buffers" })
 keymap('n', '<leader>fh', telescope.help_tags, { desc = "Find in help" })
 
--- Netrw
-require("netrw").setup()
-
-vim.g.netrw_banner = 0       -- Disable banner.
-vim.g.netrw_liststyle = 3    -- Tree style listing.
-
-vim.g.netrw_altv = 1         -- Left vertical split.
-vim.g.netrw_browse_split = 4 -- Open files in last open buffer.
-vim.g.netrw_preview = 1      -- Enable preview window (vertical).
-
-vim.g.netrw_winsize = 0      -- Normal split.
-
-function ToggleNetrw()
-  -- Check if Netrw is already open
-  if vim.g.split_netrw_bufnr then
-    -- Close Netrw.
-    vim.cmd('bwipeout ' .. vim.g.split_netrw_bufnr)
-    vim.g.split_netrw_bufnr = nil
-  else
-    -- Open Netrw.
-    vim.cmd [[Lexplore]]
-    vim.cmd [[vertical resize 30]] -- Set size of netrw.
-    vim.g.split_netrw_bufnr = vim.fn.bufnr()
-  end
-end
-
-keymap('n', '<leader>e', ToggleNetrw, { desc = "Toggle Netrw" })
+-- Enable telescope fzf native, if installed
+pcall(require('telescope').load_extension, 'fzf')
 
 -- Conform.
 require("conform").setup({
@@ -389,3 +369,8 @@ keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = 'Wor
 require("nvim-lightbulb").setup({
   autocmd = { enabled = true }
 })
+
+-- Nvim tree.
+require("nvim-tree").setup()
+
+keymap("n", "<leader>e", ":NvimTreeToggle<CR>")
