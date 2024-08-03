@@ -13,6 +13,7 @@
 	adog = log --all --decorate --oneline --graph
 	dog = log --decorate --oneline --graph
 	pushall = !git remote | xargs -L1 git push --all
+	st = status -s
 [push]
 	followTags = true
 [merge]
