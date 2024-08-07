@@ -14,6 +14,10 @@
 	dog = log --decorate --oneline --graph
 	pushall = !git remote | xargs -L1 git push --all
 	st = status -s
+	rib = "!f() { \
+		base=$(git merge-base HEAD $1); \
+		git rebase --interactive $base; \
+	}; f $1"
 [push]
 	followTags = true
 [merge]
