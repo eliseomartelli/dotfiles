@@ -268,6 +268,7 @@ local telescope = require("telescope.builtin")
 
 keymap('n', '<leader>ff', telescope.find_files, { desc = "Find files" })
 keymap('n', '<leader>fg', telescope.live_grep, { desc = "Live grep files" })
+keymap('n', '<leader>fw', telescope.grep_string, { desc = "Live grep current word" })
 keymap('n', '<leader>fb', telescope.buffers, { desc = "Find buffers" })
 keymap('n', '<leader>fh', telescope.help_tags, { desc = "Find in help" })
 
