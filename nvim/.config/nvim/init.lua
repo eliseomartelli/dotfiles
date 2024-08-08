@@ -369,7 +369,7 @@ keymap({ "n", "v" }, "<leader>ca",
   vim.lsp.buf.code_action, { desc = "Code action." })
 keymap("n", "gr", vim.lsp.buf.rename, { desc = "Rename" })
 keymap("n", "gd", telescope.lsp_definitions, { desc = "Define" })
-keymap('n', '<leader>fd', telescope.diagnostics, { desc = 'Find diagnostics.' })
+keymap('n', 'gD', telescope.diagnostics, { desc = 'Find diagnostics.' })
 keymap("n", 'gu', telescope.lsp_references, { desc = 'Usages' })
 keymap("n", '<leader>D', telescope.lsp_type_definitions, { desc = 'Definition for type.' })
 keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = 'Document Symbols' })
