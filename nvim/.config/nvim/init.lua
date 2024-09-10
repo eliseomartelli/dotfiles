@@ -240,6 +240,8 @@ lspconfig.lua_ls.setup({
   }
 })
 
+lspconfig.dartls.setup({})
+
 lspconfig.denols.setup {
   root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
 }
