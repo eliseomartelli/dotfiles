@@ -48,6 +48,9 @@ vim.opt.nrformats:append({ 'alpha', 'octal', 'hex', 'bin' })
 -- Disable showmode (Statusline has already it).
 vim.opt.showmode = false
 
+-- Save undo file.
+vim.opt.undofile = true
+
 -- Set colorscheme.
 vim.cmd [[colorscheme wildcharm]]
 
