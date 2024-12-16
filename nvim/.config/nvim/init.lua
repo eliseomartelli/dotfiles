@@ -254,6 +254,16 @@ lspconfig.ts_ls.setup {
   single_file_support = false
 }
 
+lspconfig.sourcekit.setup {
+  capabilities = {
+    workspace = {
+      didChangeWatchedFiles = {
+        dynamicRegistration = true,
+      },
+    },
+  },
+}
+
 -- mini.clue.
 require("which-key").setup()
 
@@ -285,9 +295,9 @@ require("conform").setup({
   format_on_save = {
     lsp_fallback = true,
     timeout_ms = 500,
-  }
+  },
 })
-require("mason-conform").setup()
+require("mason-conform").setup({})
 
 -- DAP.
 local dap = require("dap")
