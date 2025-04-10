@@ -2,7 +2,7 @@
 [user]
 	name = Eliseo Martelli
 	email = me@eliseomartelli.it
-	signingkey = 9560E7AF90F0E1B9
+	signingkey = 7E98D49C02A7337B54A8BA8F38D946D7F0A3FAAB
 [commit]
 	gpgsign = true
 [gpg]
