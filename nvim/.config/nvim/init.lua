@@ -149,6 +149,7 @@ require "paq" {
   { "mfussenegger/nvim-dap" },
   { "nvim-neotest/nvim-nio" },
   { "rcarriga/nvim-dap-ui" },
+  { "leoluz/nvim-dap-go" },
 
   -- Statusline.
   { "echasnovski/mini.statusline" },
@@ -162,16 +163,16 @@ require "paq" {
 
 
 -- Mason.
-require("mason").setup {}
+require("mason").setup()
 
 local mason_lspconfig = require("mason-lspconfig")
-mason_lspconfig.setup {}
+mason_lspconfig.setup()
 
 -- Fidget.
-require('fidget').setup {}
+require('fidget').setup({})
 
 -- Neodev.
-require("neodev").setup {}
+require("neodev").setup()
 
 -- Luasnip.
 require("luasnip.loaders.from_vscode").lazy_load()
@@ -296,47 +297,19 @@ require("conform").setup({
     lsp_fallback = true,
     timeout_ms = 500,
   },
+  formatters_by_ft = {
+    typescript = { "prettierd", "prettier", stop_after_first = true },
+    typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+    python = { "black" },
+    lua = { "luaformatter" },
+  },
 })
 require("mason-conform").setup({})
 
 -- DAP.
 local dap = require("dap")
 
-require("dap.ext.vscode").load_launchjs(nil, { delve = { "go" } })
-
-dap.adapters.delve = {
-  type = "server",
-  port = "${port}",
-  executable = {
-    command = "dlv",
-    args = { "dap", "-l", "127.0.0.1:${port}" },
-  },
-}
-
--- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
-dap.configurations.go = {
-  {
-    type = "delve",
-    name = "Debug",
-    request = "launch",
-    program = "${file}",
-  },
-  {
-    type = "delve",
-    name = "Debug test", -- configuration for debugging test files
-    request = "launch",
-    mode = "test",
-    program = "${file}",
-  },
-  -- works with go.mod packages and sub packages
-  {
-    type = "delve",
-    name = "Debug test (go.mod)",
-    request = "launch",
-    mode = "test",
-    program = "./${relativeFileDirname}",
-  },
-}
+require('dap-go').setup()
 
 -- Treesitter.
 require("nvim-treesitter.configs").setup({
@@ -374,11 +347,6 @@ end, { desc = "Show scopes" })
 local statusline = require('mini.statusline')
 statusline.setup()
 
--- Disable line information in statusline.
-statusline.section_location = function()
-  return ''
-end
-
 -- LSP.
 keymap({ "n", "v" }, "<leader>ca",
   vim.lsp.buf.code_action, { desc = "Code action." })
@@ -389,6 +357,7 @@ keymap("n", 'gu', telescope.lsp_references, { desc = 'Usages' })
 keymap("n", '<leader>D', telescope.lsp_type_definitions, { desc = 'Definition for type.' })
 keymap("n", '<leader>ds', telescope.lsp_document_symbols, { desc = 'Document Symbols' })
 keymap("n", '<leader>ws', telescope.lsp_dynamic_workspace_symbols, { desc = 'Workspace Symbols' })
+
 
 -- Show codeactions.
 require("nvim-lightbulb").setup({
