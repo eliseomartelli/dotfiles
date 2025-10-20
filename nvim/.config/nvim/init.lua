@@ -3,6 +3,9 @@ local keymap = vim.keymap.set
 -- Cache modules.
 vim.loader.enable()
 
+-- termguicolors.
+vim.termguicolors = true
+
 -- Display tabs and spaces.
 vim.opt.list = true
 
@@ -159,14 +162,14 @@ require "paq" {
 
   -- Git.
   { 'tpope/vim-fugitive' },
+
+  { 'github/copilot.vim' },
+  { 'CopilotC-Nvim/CopilotChat.nvim' }
 }
 
 
 -- Mason.
 require("mason").setup()
-
-local mason_lspconfig = require("mason-lspconfig")
-mason_lspconfig.setup()
 
 -- Fidget.
 require('fidget').setup({})
@@ -224,38 +227,34 @@ cmp.setup({
   }
 })
 
--- CMP lsp.
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
+-- lsp.
 local lspconfig = require("lspconfig")
 
-mason_lspconfig.setup_handlers({
-  function(server_name) -- default handler (optional)
-    lspconfig[server_name].setup({ capabilities = capabilities })
-  end, })
-
-lspconfig.lua_ls.setup({
+vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
       completion = {
         callSnippet = "Replace"
+      },
+      diagnostics = {
+        globals = { 'vim' } -- Add vim as a global variable
       }
     }
   }
 })
 
-lspconfig.dartls.setup({})
+vim.lsp.config("dartls", {})
 
-lspconfig.denols.setup {
+vim.lsp.config("denols", {
   root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-}
+})
 
-lspconfig.ts_ls.setup {
+vim.lsp.config("ts_ls", {
   root_dir = lspconfig.util.root_pattern("package.json"),
   single_file_support = false
-}
+})
 
-lspconfig.sourcekit.setup {
+vim.lsp.config("sourcekit", {
   capabilities = {
     workspace = {
       didChangeWatchedFiles = {
@@ -263,7 +262,9 @@ lspconfig.sourcekit.setup {
       },
     },
   },
-}
+})
+
+require("mason-lspconfig").setup()
 
 -- mini.clue.
 require("which-key").setup()
@@ -366,5 +367,10 @@ require("nvim-lightbulb").setup({
 
 -- Nvim tree.
 require("nvim-tree").setup()
+
+-- Copilot.
+require("CopilotChat").setup {
+  -- See Configuration section for options
+}
 
 keymap("n", "<leader>e", ":NvimTreeToggle<CR>")
