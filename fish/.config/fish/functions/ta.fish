@@ -1,7 +1,11 @@
 # Function: `ta` for attaching to a tmux session
 function ta
     if test -n "$argv[1]"
-        tmux attach-session -t $argv[1]
+        set -l target "$argv[1]"
+        if not string match -q "*:*" "$target"
+            set target "$target:"
+        end
+        tmux attach-session -t "$target"
     else
         echo "Please specify session to attach."
     end
