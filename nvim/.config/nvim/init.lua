@@ -55,6 +55,16 @@ vim.o.cursorline = true
 -- Minimum lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+-- Show ruler.
+vim.o.ruler = true
+
+-- Show column at 80 characters.
+vim.o.colorcolumn = "80"
+
+-- Default tab indentation (4 chars).
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+
 -- Ask for confirmations.
 vim.o.confirm = true
 
