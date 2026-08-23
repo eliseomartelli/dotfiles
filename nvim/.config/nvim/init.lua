@@ -713,3 +713,9 @@ require("which-key").setup()
 
 -- Fugitive
 vim.pack.add({ gh("tpope/vim-fugitive") })
+
+-- Lightbulb
+vim.pack.add({ gh("kosayoda/nvim-lightbulb") })
+require("nvim-lightbulb").setup({
+	autocmd = { enabled = true },
+})
