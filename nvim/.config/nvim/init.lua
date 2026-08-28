@@ -52,9 +52,6 @@ vim.o.inccommand = "split"
 -- Show cursorline.
 vim.o.cursorline = true
 
--- Minimum lines to keep above and below the cursor.
-vim.o.scrolloff = 10
-
 -- Show ruler.
 vim.o.ruler = true
 
@@ -179,18 +176,6 @@ end
 vim.pack.add({ gh("NMAC427/guess-indent.nvim") })
 require("guess-indent").setup({})
 
--- Gitsigns.
-vim.pack.add({ gh("lewis6991/gitsigns.nvim") })
-require("gitsigns").setup({
-	signs = {
-		add = { text = "+" }, ---@diagnostic disable-line: missing-fields
-		change = { text = "~" }, ---@diagnostic disable-line: missing-fields
-		delete = { text = "_" }, ---@diagnostic disable-line: missing-fields
-		topdelete = { text = "‾" }, ---@diagnostic disable-line: missing-fields
-		changedelete = { text = "~" }, ---@diagnostic disable-line: missing-fields
-	},
-})
-
 -- Todo comments.
 vim.pack.add({ gh("folke/todo-comments.nvim") })
 require("todo-comments").setup({ signs = false })
@@ -264,43 +249,6 @@ vim.keymap.set("n", "<leader>fu", builtin.oldfiles, { desc = "[F]ind [U]sed file
 vim.keymap.set("n", "<leader>fc", builtin.commands, { desc = "[F]ind [C]ommands" })
 vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "[F]ind [B]uffers" })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("telescope-lsp-attach", { clear = true }),
-	callback = function(event)
-		local buf = event.buf
-
-		-- Find references for the word under your cursor.
-		vim.keymap.set("n", "grr", builtin.lsp_references, { buffer = buf, desc = "[G]oto [R]eferences" })
-
-		-- Jump to the implementation of the word under your cursor.
-		-- Useful when your language has ways of declaring types without an actual implementation.
-		vim.keymap.set("n", "gri", builtin.lsp_implementations, { buffer = buf, desc = "[G]oto [I]mplementation" })
-
-		-- Jump to the definition of the word under your cursor.
-		-- This is where a variable was first declared, or where a function is defined, etc.
-		-- To jump back, press <C-t>.
-		vim.keymap.set("n", "grd", builtin.lsp_definitions, { buffer = buf, desc = "[G]oto [D]efinition" })
-
-		-- Fuzzy find all the symbols in your current document.
-		-- Symbols are things like variables, functions, types, etc.
-		vim.keymap.set("n", "gO", builtin.lsp_document_symbols, { buffer = buf, desc = "Open Document Symbols" })
-
-		-- Fuzzy find all the symbols in your current workspace.
-		-- Similar to document symbols, except searches over your entire project.
-		vim.keymap.set(
-			"n",
-			"gW",
-			builtin.lsp_dynamic_workspace_symbols,
-			{ buffer = buf, desc = "Open Workspace Symbols" }
-		)
-
-		-- Jump to the type of the word under your cursor.
-		-- Useful when you're not sure what type a variable is and you want to see
-		-- the definition of its *type*, not where it was *defined*.
-		vim.keymap.set("n", "grt", builtin.lsp_type_definitions, { buffer = buf, desc = "[G]oto [T]ype Definition" })
-	end,
-})
-
 -- Override default behavior and theme when searching
 vim.keymap.set("n", "<leader>/", function()
 	-- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -315,7 +263,7 @@ vim.pack.add({ gh("j-hui/fidget.nvim") })
 require("fidget").setup({})
 
 vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 	callback = function(event)
 		local map = function(keys, func, desc, mode)
 			mode = mode or "n"
@@ -325,15 +273,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		map("gr", vim.lsp.buf.rename, "Rename")
 		map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
 		map("gd", builtin.lsp_definitions, "Goto Definition")
-		map("gD", builtin.diagnostics, "Find Diagnostics")
 		map("gu", builtin.lsp_references, "Find Usages")
+		map("gri", builtin.lsp_implementations, "Goto Implementation")
 		map("<leader>D", builtin.lsp_type_definitions, "Definition for Type")
 		map("<leader>ds", builtin.lsp_document_symbols, "Document Symbols")
 		map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols")
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		if client and client:supports_method("textDocument/documentHighlight", event.buf) then
-			local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+			local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
 				group = highlight_augroup,
@@ -347,10 +295,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			})
 
 			vim.api.nvim_create_autocmd("LspDetach", {
-				group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+				group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
 				callback = function(event2)
 					vim.lsp.buf.clear_references()
-					vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
+					vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
 				end,
 			})
 		end
@@ -450,7 +398,6 @@ end, { desc = "[F]ormat buffer" })
 
 vim.pack.add({
 	gh("nvim-neo-tree/neo-tree.nvim"),
-	gh("nvim-lua/plenary.nvim"),
 	gh("MunifTanjim/nui.nvim"),
 })
 
@@ -474,7 +421,7 @@ require("blink.cmp").setup({
 		documentation = { auto_show = true, auto_show_delay_ms = 500 },
 	},
 	sources = {
-		default = { "lsp", "path", "snippets" },
+		default = { "lsp", "path", "snippets", "buffer" },
 	},
 	snippets = { preset = "luasnip" },
 	fuzzy = { implementation = "lua" },
@@ -538,12 +485,11 @@ require("nvim-lightbulb").setup({
 })
 
 vim.pack.add({
-	"https://github.com/mfussenegger/nvim-dap",
-	"https://github.com/rcarriga/nvim-dap-ui",
-	"https://github.com/nvim-neotest/nvim-nio",
-	"https://github.com/mason-org/mason.nvim",
-	"https://github.com/jay-babu/mason-nvim-dap.nvim",
-	"https://github.com/leoluz/nvim-dap-go",
+	gh("mfussenegger/nvim-dap"),
+	gh("rcarriga/nvim-dap-ui"),
+	gh("nvim-neotest/nvim-nio"),
+	gh("jay-babu/mason-nvim-dap.nvim"),
+	gh("leoluz/nvim-dap-go"),
 })
 
 -- Basic debugging keymaps, feel free to change to your liking!
@@ -640,12 +586,16 @@ require("dap-go").setup({
 })
 
 -- Adds git related signs to the gutter, as well as utilities for managing changes
--- NOTE: gitsigns is already included in init.lua but contains only the base
--- config. This will add also the recommended keymaps.
-
-vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" })
+vim.pack.add({ gh("lewis6991/gitsigns.nvim") })
 
 require("gitsigns").setup({
+	signs = {
+		add = { text = "+" }, ---@diagnostic disable-line: missing-fields
+		change = { text = "~" }, ---@diagnostic disable-line: missing-fields
+		delete = { text = "_" }, ---@diagnostic disable-line: missing-fields
+		topdelete = { text = "‾" }, ---@diagnostic disable-line: missing-fields
+		changedelete = { text = "~" }, ---@diagnostic disable-line: missing-fields
+	},
 	on_attach = function(bufnr)
 		local gitsigns = require("gitsigns")
 
@@ -713,9 +663,3 @@ require("which-key").setup()
 
 -- Fugitive
 vim.pack.add({ gh("tpope/vim-fugitive") })
-
--- Lightbulb
-vim.pack.add({ gh("kosayoda/nvim-lightbulb") })
-require("nvim-lightbulb").setup({
-	autocmd = { enabled = true },
-})
