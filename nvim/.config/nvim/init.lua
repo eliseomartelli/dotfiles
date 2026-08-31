@@ -29,6 +29,27 @@ vim.cmd.colorscheme("wildcharm")
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
+-- Use ripgrep for search if available.
+if vim.fn.executable("rg") == 1 then
+	vim.o.grepprg =
+		"rg --smart-case --vimgrep --no-heading --follow --multiline --multiline-dotall --hidden --pcre2 --regexp"
+	vim.o.grepformat = "%f:%l:%c:%m"
+end
+
+-- Automatically open quickfix list on search / grep.
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+	desc = "Automatically open quickfix list on search",
+	group = vim.api.nvim_create_augroup("kickstart-quickfix", { clear = true }),
+	pattern = { "[^l]*" },
+	command = "cwindow",
+})
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+	desc = "Automatically open location list on search",
+	group = "kickstart-quickfix",
+	pattern = { "l*" },
+	command = "lwindow",
+})
+
 -- Show signcolumn.
 vim.o.signcolumn = "yes"
 
@@ -108,6 +129,18 @@ vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right win
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- Quickfix navigation and toggle.
+vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "<leader>cq", function()
+	local qf_win = vim.fn.getqflist({ winid = 0 }).winid
+	if qf_win ~= 0 then
+		vim.cmd.cclose()
+	else
+		vim.cmd.copen()
+	end
+end, { desc = "Toggle [Q]uickfix list" })
+
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -119,6 +152,30 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- Vim pack.
 -- check updates:  :lua vim.pack.update(nil, { offline = true })
 -- update plugins: :lua vim.pack.update()
+
+local function update_all()
+	vim.notify("Updating plugins (vim.pack)...", vim.log.levels.INFO)
+	pcall(function()
+		vim.pack.update()
+	end)
+
+	vim.notify("Updating Treesitter parsers...", vim.log.levels.INFO)
+	pcall(function()
+		vim.cmd("TSUpdate")
+	end)
+
+	vim.notify("Updating Mason tools & registries...", vim.log.levels.INFO)
+	pcall(function()
+		vim.cmd("MasonUpdate")
+	end)
+	pcall(function()
+		require("mason-tool-installer").check_install(true)
+	end)
+end
+
+vim.api.nvim_create_user_command("UpdateAll", update_all, {
+	desc = "Update vim.pack plugins, Treesitter parsers, and Mason tools",
+})
 
 local function run_build(name, cmd, cwd)
 	local result = vim.system(cmd, { cwd = cwd }):wait()
@@ -209,6 +266,9 @@ require("mini.ai").setup({
 -- - sd'   - [S]urround [D]elete [']quotes
 -- - sr)'  - [S]urround [R]eplace [)] [']
 require("mini.surround").setup()
+
+-- Pairs.
+require("mini.pairs").setup()
 
 local statusline = require("mini.statusline")
 statusline.setup({ use_icons = vim.g.have_nerd_font })
@@ -324,7 +384,6 @@ require("mason-lspconfig").setup({
 })
 
 local servers = {
-
 	-- recomended by nvim help docs.
 	lua_ls = {
 		on_init = function(client)
@@ -361,11 +420,25 @@ local servers = {
 			},
 		},
 	},
+	gopls = {},
+	ts_ls = {},
+	angularls = {},
+	dockerls = {},
+	docker_compose_language_service = {},
 }
 
 local ensure_installed = vim.tbl_keys(servers or {})
 vim.list_extend(ensure_installed, {
-	-- You can add other tools here that you want Mason to install
+	-- Formatters / Linters
+	"stylua",
+	"luaformatter",
+	"black",
+	"prettier",
+	"prettierd",
+	"sqlfmt",
+	"dockerfmt",
+	-- Debuggers
+	"delve",
 })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
@@ -663,3 +736,5 @@ require("which-key").setup()
 
 -- Fugitive
 vim.pack.add({ gh("tpope/vim-fugitive") })
+
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
