@@ -44,9 +44,37 @@ function fish_prompt
             _is_$argv[1]_dirty
         end
 
+        function _jj_branch_name
+            # Uses modern template syntax to fetch the first bookmark name, falling back to a short change ID
+            set -l log_output (jj log --ignore-working-copy --no-graph --no-color -r '@' -T 'try(bookmarks.first().name(), change_id.short())' 2>/dev/null)
+            if test -n "$log_output"
+                echo "$log_output"
+            else
+                echo "jj"
+            end
+        end
+
+        function _is_jj_dirty
+            # In jj, the working copy itself is a commit. We check if there are any changes 
+            # relative to its parent, or if the working copy is empty/modified.
+            not jj diff --ignore-working-copy --quiet 2>/dev/null
+            # Alternatively, if you want to catch uncommitted working copy changes:
+            set -l stat (jj st --no-pager 2>/dev/null)
+            test -n "$stat"
+        end
+
+        function _is_jj_repo
+            type -q jj
+            or return 1
+            jj root --quiet >/dev/null 2>&1
+        end
+
         function _repo_type
             if _is_hg_repo
                 echo hg
+                return 0
+            else if _is_jj_repo
+                echo jj
                 return 0
             else if _is_git_repo
                 echo git

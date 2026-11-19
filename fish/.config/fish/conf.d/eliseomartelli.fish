@@ -9,6 +9,7 @@ alias uni 'cd ~/Documents/University/master/'
 alias yarn 'yarn --use-yarnrc $XDG_CONFIG_HOME/yarn/config'
 alias mitmproxy "mitmproxy --set confdir=$XDG_CONFIG_HOME/mitmproxy"
 alias mitmweb "mitmweb --set confdir=$XDG_CONFIG_HOME/mitmproxy"
+alias dst "cd ~/Developer/work/Studio2800/"
 
 # GPG and Editor
 set -x GPG_TTY (tty)
@@ -31,7 +32,6 @@ set -x XDG_DATA_HOME "$HOME/.local/share"
 set -x XDG_CONFIG_HOME "$HOME/.config"
 set -x XDG_STATE_HOME "$HOME/.local/state"
 set -x XDG_CACHE_HOME "$HOME/.cache"
-set -x XDG_RUNTIME_DIR "/tmp/run/user/$UID"
 
 # Application-specific directories
 set -x ANDROID_USER_HOME "$XDG_DATA_HOME/android"
@@ -61,8 +61,13 @@ bind \cx\ce edit_command_buffer
 # Fzf
 fzf --fish | source
 
-# Zoxide
+# Zoxide.
 zoxide init fish | source
 
 # Mise.
 mise activate fish | source
+
+# SSH via Secure Enclave
+set -x SSH_SK_PROVIDER /usr/lib/ssh-keychain.dylib
+
+
