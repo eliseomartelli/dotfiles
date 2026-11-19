@@ -1,0 +1,4 @@
+.nvim.lua
+.exrc
+
+**/.claude/settings.local.json

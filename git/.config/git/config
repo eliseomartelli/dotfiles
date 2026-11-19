@@ -21,8 +21,10 @@
 	changes = diff --name-status
 	incoming = !git fetch && git log ..@{u} --oneline
 	outgoing = log @{u}.. --oneline
+	wp = !sh \"$HOME/.config/git/wp.sh\"
 [push]
 	followTags = true
+	autoSetupRemote = true
 [merge]
 	tool = nvimdiff
 [filter "lfs"]
@@ -30,3 +32,8 @@
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+[color]
+	ui = always
+# Machine-specific overrides (work identity, etc.). Untracked; must stay last.
+[include]
+	path = config.local
