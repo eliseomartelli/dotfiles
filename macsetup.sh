@@ -26,8 +26,6 @@ defaults write com.apple.TextEdit "RichText" -bool "false" && killall TextEdit
 defaults write -g NSWindowShouldDragOnGesture -bool true
 
 brew install \
-	awscli \
-	buildkit \
 	cabextract \
 	cmake \
 	fish \
@@ -70,10 +68,8 @@ brew install --cask \
 	antigravity-cli \
 	betterdisplay \
 	claude-code \
-	docker-desktop \
 	font-meslo-lg-nerd-font \
 	mactex-no-gui \
-	obsidian \
 	rapidapi \
 	tg-pro \
 	unsloth \
@@ -81,7 +77,6 @@ brew install --cask \
 
 # Installed outside Homebrew:
 #   rex      - https://rex.superlogical.com (config: dotfiles/rex)
-uv tool install jiratui  # config (has API token) is machine-local: ~/.config/jiratui
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
