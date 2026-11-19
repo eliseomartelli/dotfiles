@@ -96,8 +96,8 @@ rex.bind("ctrl+b>shift+;", "client.palette.toggle") -- :
 rex.action({
 	name = "keyhelp",
 	title = "Show Prefix Keys",
-	run = function()
-		rex.exec.start({ "sh", os.getenv("HOME") .. "/.config/rex/keyhelp.sh" }, { detach = true })
+	run = function(ctx)
+		rex.exec.start({ "sh", os.getenv("HOME") .. "/.config/rex/keyhelp.sh", ctx.session_id }, { detach = true })
 	end,
 })
 rex.bind("ctrl+b>shift+/", "keyhelp") -- ?
