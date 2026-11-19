@@ -104,3 +104,39 @@ rex.bind("ctrl+b>shift+/", "keyhelp") -- ?
 
 -- floating pane (like tmux popup)
 rex.bind("ctrl+b>enter", "pane.new_floating")
+
+-- Worktree picker for `git wp` (git/.config/git/wp.sh). `rows` is "label<TAB>path"
+-- lines; the chosen path is the action's result, printed by `rex do`.
+rex.action({
+	name = "git_wp",
+	title = "Git: Worktree…",
+	args = { rows = "string", query = "string?" },
+	run = function(ctx, args)
+		if not rex.ui then
+			error("rex.ui is not available; this needs a Rex server with API revision 17 or newer")
+		end
+		local items = {}
+		for line in args.rows:gmatch("[^\n]+") do
+			local label, path = line:match("^(.-)\t(.*)$")
+			if path then
+				items[#items + 1] = { id = path, title = label, subtitle = path, icon = "branch" }
+			end
+		end
+		local path, why = rex.ui.pick({
+			title = "Worktree",
+			placeholder = "Filter worktrees",
+			value = args.query or "",
+			items = items,
+		})
+		if path ~= nil then
+			return path
+		end
+		-- Cancelled or timed out: an empty result means "stay put". Any other
+		-- reason (no_client, unsupported, busy, failed) is an error so the caller
+		-- can fall back to fzf.
+		if why == "cancelled" or why == "timeout" then
+			return ""
+		end
+		error("rex.ui.pick: " .. tostring(why))
+	end,
+})
