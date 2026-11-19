@@ -1,1 +1,7 @@
 *.DS_Store
+fish/.config/fish/fish_variables
+fish/.config/fish/conf.d/claude.fish
+*.local
+jj/.config/jj/conf.d/
+jj/.config/jj/repos/
+macsetup.local.sh
