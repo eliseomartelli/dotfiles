@@ -1,5 +1,3 @@
--- vim: ts=2 sts=2 sw=2 et
-
 -- Cache modules.
 vim.loader.enable()
 
@@ -86,6 +84,26 @@ vim.o.shiftwidth = 4
 -- Ask for confirmations.
 vim.o.confirm = true
 
+-- Keep context lines visible above/below the cursor.
+vim.o.scrolloff = 8
+
+-- Keep the text on screen stable when opening/closing splits.
+vim.o.splitkeep = "screen"
+
+-- Restore the view (scroll position) when jumping back.
+vim.o.jumpoptions = "view"
+
+-- Rounded borders for all floating windows (hover, diagnostics, pickers, ...).
+vim.o.winborder = "rounded"
+
+-- Sync clipboard between OS and Neovim.
+--  Scheduled after `UiEnter` because it can increase startup-time.
+--  Remove this option if you want your OS clipboard to remain independent.
+--  See `:help 'clipboard'`
+vim.schedule(function()
+	vim.o.clipboard = "unnamedplus"
+end)
+
 -- Enable project-local configuration (.nvim.lua, .exrc)
 vim.o.exrc = true
 
@@ -93,13 +111,25 @@ vim.o.exrc = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostics.
+local virtual_text_opts = { source = "if_many", spacing = 2 }
+
 vim.diagnostic.config({
 	update_in_insert = false,
 	severity_sort = true,
-	float = { border = "rounded", source = "if_many" },
+	float = { source = "if_many" },
 	underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
-	virtual_text = true, -- Text shows up at the end of the line
+	-- Use nerd font icons in the sign column when available.
+	signs = vim.g.have_nerd_font and {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "\u{F015A} ",
+			[vim.diagnostic.severity.WARN] = "\u{F002A} ",
+			[vim.diagnostic.severity.INFO] = "\u{F02FD} ",
+			[vim.diagnostic.severity.HINT] = "\u{F0336} ",
+		},
+	} or {},
+
+	virtual_text = virtual_text_opts, -- Text shows up at the end of the line
 	virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
 	-- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
@@ -116,6 +146,15 @@ vim.diagnostic.config({
 
 -- Diagnostic keymaps.
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Open diagnostic [Q]uickfix list" })
+
+-- Toggle between end-of-line diagnostics (virtual text) and diagnostics under the line (virtual lines).
+vim.keymap.set("n", "<leader>td", function()
+	local lines_enabled = vim.diagnostic.config().virtual_lines
+	vim.diagnostic.config({
+		virtual_lines = not lines_enabled,
+		virtual_text = lines_enabled and virtual_text_opts or false,
+	})
+end, { desc = "[T]oggle [D]iagnostic virtual lines" })
 
 -- Terminal keymaps.
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -217,11 +256,6 @@ vim.api.nvim_create_autocmd("PackChanged", {
 			return
 		end
 
-		if name == "telescope-fzf-native.nvim" and vim.fn.executable("make") == 1 then
-			run_build(name, { "make" }, ev.data.path)
-			return
-		end
-
 		if name == "LuaSnip" then
 			if vim.fn.has("win32") ~= 1 and vim.fn.executable("make") == 1 then
 				run_build(name, { "make", "install_jsregexp" }, ev.data.path)
@@ -249,14 +283,14 @@ vim.pack.add({ gh("NMAC427/guess-indent.nvim") })
 require("guess-indent").setup({})
 
 -- Todo comments.
-vim.pack.add({ gh("folke/todo-comments.nvim") })
+vim.pack.add({ gh("nvim-lua/plenary.nvim"), gh("folke/todo-comments.nvim") })
 require("todo-comments").setup({ signs = false })
 
 -- Mini.nvim.
 vim.pack.add({ gh("nvim-mini/mini.nvim") })
 if vim.g.have_nerd_font then
 	require("mini.icons").setup()
-	-- Used for backwards compatibility with plugins that require `nvim-web-devicons` (e.g. telescope.nvim)
+	-- Used for backwards compatibility with plugins that require `nvim-web-devicons`
 	MiniIcons.mock_nvim_web_devicons()
 end
 
@@ -286,56 +320,76 @@ require("mini.surround").setup()
 require("mini.pairs").setup()
 
 local statusline = require("mini.statusline")
-statusline.setup({ use_icons = vim.g.have_nerd_font })
-
--- Telescope
----@type (string|vim.pack.Spec)[]
-local telescope_plugins = {
-	gh("nvim-lua/plenary.nvim"),
-	gh("nvim-telescope/telescope.nvim"),
-	gh("nvim-telescope/telescope-ui-select.nvim"),
-}
-
-if vim.fn.executable("make") == 1 then
-	table.insert(telescope_plugins, gh("nvim-telescope/telescope-fzf-native.nvim"))
+-- Show cursor location as `line:column` (kickstart default).
+---@diagnostic disable-next-line: duplicate-set-field
+statusline.section_location = function()
+	return "%2l:%-2v"
 end
 
-vim.pack.add(telescope_plugins)
+-- Pickers (replaces telescope): fuzzy finders, LSP pickers, `vim.ui.select`.
+require("mini.extra").setup()
+require("mini.pick").setup()
+vim.ui.select = MiniPick.ui_select
 
-require("telescope").setup({
-	extensions = {
-		["ui-select"] = { require("telescope.themes").get_dropdown() },
-	},
-})
+-- Pick a picker from the registry.
+MiniPick.registry.registry = function()
+	local items = vim.tbl_keys(MiniPick.registry)
+	table.sort(items)
+	local chosen = MiniPick.start({ source = { items = items, name = "Pickers", choose = function() end } })
+	if chosen == nil then
+		return
+	end
+	return MiniPick.registry[chosen]()
+end
 
-pcall(require("telescope").load_extension, "fzf")
-pcall(require("telescope").load_extension, "ui-select")
+-- Grep for the word under the cursor, or the visual selection.
+local function grep_current_word()
+	local mode = vim.fn.mode()
+	local pattern
+	if mode == "v" or mode == "V" or mode == "\22" then
+		pattern = table.concat(vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode }), "\n")
+	else
+		pattern = vim.fn.expand("<cword>")
+	end
+	MiniPick.builtin.grep({ pattern = pattern })
+end
 
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "[F]ind [H]elp" })
-vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "[F]ind [K]eymaps" })
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[F]ind [F]iles" })
-vim.keymap.set("n", "<leader>fs", builtin.builtin, { desc = "[F]ind [S]earch Telescope" })
-vim.keymap.set({ "n", "v" }, "<leader>fcw", builtin.grep_string, { desc = "[F]ind [C]urrent [W]ord" })
-vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "[F]ind [G]rep" })
-vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[F]ind [D]iagnostics" })
-vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })
-vim.keymap.set("n", "<leader>fu", builtin.oldfiles, { desc = "[F]ind [U]sed files" })
-vim.keymap.set("n", "<leader>fc", builtin.commands, { desc = "[F]ind [C]ommands" })
-vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "[F]ind [B]uffers" })
+vim.keymap.set("n", "<leader>fh", MiniPick.builtin.help, { desc = "[F]ind [H]elp" })
+vim.keymap.set("n", "<leader>fk", MiniExtra.pickers.keymaps, { desc = "[F]ind [K]eymaps" })
+vim.keymap.set("n", "<leader>ff", MiniPick.builtin.files, { desc = "[F]ind [F]iles" })
+vim.keymap.set("n", "<leader>fs", MiniPick.registry.registry, { desc = "[F]ind [S]earch pickers" })
+vim.keymap.set({ "n", "v" }, "<leader>fcw", grep_current_word, { desc = "[F]ind [C]urrent [W]ord" })
+vim.keymap.set("n", "<leader>fg", MiniPick.builtin.grep_live, { desc = "[F]ind [G]rep" })
+vim.keymap.set("n", "<leader>fd", MiniExtra.pickers.diagnostic, { desc = "[F]ind [D]iagnostics" })
+vim.keymap.set("n", "<leader>fr", MiniPick.builtin.resume, { desc = "[F]ind [R]esume" })
+vim.keymap.set("n", "<leader>fu", MiniExtra.pickers.oldfiles, { desc = "[F]ind [U]sed files" })
+vim.keymap.set("n", "<leader>fC", MiniExtra.pickers.commands, { desc = "[F]ind [C]ommands" })
+vim.keymap.set("n", "<leader>fb", MiniPick.builtin.buffers, { desc = "[F]ind [B]uffers" })
 
--- Override default behavior and theme when searching
 vim.keymap.set("n", "<leader>/", function()
-	-- You can pass additional configuration to Telescope to change the theme, layout, etc.
-	builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-		winblend = 10,
-		previewer = false,
-	}))
+	MiniExtra.pickers.buf_lines({ scope = "current" })
 end, { desc = "[/] Fuzzily search in current buffer" })
+
+-- File explorer (replaces neo-tree).
+require("mini.files").setup()
+vim.keymap.set("n", "<leader>e", function()
+	if MiniFiles.close() == nil then
+		MiniFiles.open()
+	end
+end, { desc = "Toggle [E]xplorer" })
 
 -- LSP.
 vim.pack.add({ gh("j-hui/fidget.nvim") })
 require("fidget").setup({})
+
+-- Cleanup for LSP document highlights. Created once (not per attach) so every buffer keeps its cleanup.
+vim.api.nvim_create_autocmd("LspDetach", {
+	group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
+	callback = function(event)
+		vim.lsp.buf.clear_references()
+		vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event.buf })
+	end,
+})
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -345,14 +399,26 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
-		map("gr", vim.lsp.buf.rename, "Rename")
-		map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
-		map("gd", builtin.lsp_definitions, "Goto Definition")
-		map("gu", builtin.lsp_references, "Find Usages")
-		map("gri", builtin.lsp_implementations, "Goto Implementation")
-		map("<leader>D", builtin.lsp_type_definitions, "Definition for Type")
-		map("<leader>ds", builtin.lsp_document_symbols, "Document Symbols")
-		map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols")
+		-- Rename is `grn` (built-in since Neovim 0.11); `gr` is left free as the prefix of the built-in `gr*` maps.
+		map("<leader>ca", vim.lsp.buf.code_action, "Code Action", { "n", "x" })
+		map("gd", function()
+			MiniExtra.pickers.lsp({ scope = "definition" })
+		end, "Goto Definition")
+		map("gu", function()
+			MiniExtra.pickers.lsp({ scope = "references" })
+		end, "Find Usages")
+		map("gri", function()
+			MiniExtra.pickers.lsp({ scope = "implementation" })
+		end, "Goto Implementation")
+		map("<leader>D", function()
+			MiniExtra.pickers.lsp({ scope = "type_definition" })
+		end, "Definition for Type")
+		map("<leader>ds", function()
+			MiniExtra.pickers.lsp({ scope = "document_symbol" })
+		end, "Document Symbols")
+		map("<leader>ws", function()
+			MiniExtra.pickers.lsp({ scope = "workspace_symbol" })
+		end, "Workspace Symbols")
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		if client and client:supports_method("textDocument/documentHighlight", event.buf) then
@@ -367,14 +433,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				buffer = event.buf,
 				group = highlight_augroup,
 				callback = vim.lsp.buf.clear_references,
-			})
-
-			vim.api.nvim_create_autocmd("LspDetach", {
-				group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
-				callback = function(event2)
-					vim.lsp.buf.clear_references()
-					vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
-				end,
 			})
 		end
 		if client and client:supports_method("textDocument/inlayHint", event.buf) then
@@ -394,50 +452,42 @@ vim.pack.add({
 
 require("mason").setup({})
 
+-- Servers are enabled explicitly below, so mason-lspconfig only provides the lspconfig <-> mason name mapping.
 require("mason-lspconfig").setup({
 	automatic_enable = true,
 })
 
+-- Lua LSP setup for Neovim config / plugin development.
+vim.pack.add({ gh("folke/lazydev.nvim") })
+require("lazydev").setup({
+	library = {
+		-- Load luvit types when the `vim.uv` word is found.
+		{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+	},
+})
+
 local servers = {
-	-- recomended by nvim help docs.
 	lua_ls = {
 		on_init = function(client)
 			client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
-
-			if client.workspace_folders then
-				local path = client.workspace_folders[1].name
-				if
-					path ~= vim.fn.stdpath("config")
-					and (vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc"))
-				then
-					return
-				end
-			end
-
-			local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
-			client.config.settings.Lua = vim.tbl_deep_extend("force", current_settings.Lua, {
-				runtime = {
-					version = "LuaJIT",
-					path = { "lua/?.lua", "lua/?/init.lua" },
-				},
-				workspace = {
-					checkThirdParty = false,
-					-- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-					--  See https://github.com/neovim/nvim-lspconfig/issues/3189
-					library = vim.api.nvim_get_runtime_file("", true),
-				},
-			})
 		end,
-		---@type lspconfig.settings.lua_ls
 		settings = {
 			Lua = {
 				format = { enable = false }, -- Disable formatting (formatting is done by stylua)
+				completion = { callSnippet = "Replace" },
 			},
 		},
 	},
 	gopls = {},
 	ts_ls = {},
 	angularls = {},
+	eslint = {},
+	html = {},
+	cssls = {},
+	jsonls = {},
+	yamlls = {},
+	basedpyright = {},
+	ruff = {},
 	dockerls = {},
 	docker_compose_language_service = {},
 }
@@ -445,13 +495,16 @@ local servers = {
 local ensure_installed = vim.tbl_keys(servers or {})
 vim.list_extend(ensure_installed, {
 	-- Formatters / Linters
+	-- NOTE: Mason only installs these binaries. A formatter is used on save / `<leader>cf`
+	-- only if it is also listed in `formatters_by_ft` of conform below.
 	"stylua",
-	"luaformatter",
 	"black",
 	"prettier",
 	"prettierd",
 	"sqlfmt",
 	"dockerfmt",
+	"goimports",
+	"gofumpt",
 	-- Debuggers
 	"delve",
 })
@@ -480,23 +533,10 @@ require("conform").setup({
 	},
 })
 
-vim.keymap.set({ "n", "v" }, "<leader>f", function()
+-- NOTE: not `<leader>f`, which is the prefix of all the `<leader>f*` find mappings.
+vim.keymap.set({ "n", "v" }, "<leader>cf", function()
 	require("conform").format({ async = true })
-end, { desc = "[F]ormat buffer" })
-
-vim.pack.add({
-	gh("nvim-neo-tree/neo-tree.nvim"),
-	gh("MunifTanjim/nui.nvim"),
-})
-
-vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Toggle [E]xplorer" })
-require("neo-tree").setup({
-	window = {
-		mappings = {
-			["C"] = "close_all_subnodes",
-		},
-	},
-})
+end, { desc = "[C]ode [F]ormat buffer" })
 
 vim.pack.add({ { src = gh("L3MON4D3/LuaSnip"), version = vim.version.range("2.*") } })
 require("luasnip").setup({})
@@ -516,6 +556,12 @@ require("blink.cmp").setup({
 	},
 	sources = {
 		default = { "lsp", "path", "snippets", "buffer" },
+		per_filetype = {
+			lua = { inherit_defaults = true, "lazydev" },
+		},
+		providers = {
+			lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
+		},
 	},
 	snippets = { preset = "luasnip" },
 	fuzzy = { implementation = "lua" },
@@ -695,21 +741,22 @@ _G.git_review = {
 	},
 }
 
+-- Run git without a shell (arguments are never interpreted by a shell). Returns output lines or nil on failure.
+function _G.git_review.git(args)
+	local res = vim.system(vim.list_extend({ "git" }, args), { text = true }):wait()
+	if res.code ~= 0 then
+		return nil
+	end
+	return vim.split(res.stdout or "", "\n", { trimempty = true })
+end
+
 function _G.git_review.get_current_branch()
-	local handle = io.popen("git symbolic-ref --short HEAD 2>/dev/null")
-	local branch = handle and handle:read("*l")
-	if handle then
-		handle:close()
+	local branch = _G.git_review.git({ "symbolic-ref", "--short", "HEAD" })
+	if branch and branch[1] then
+		return branch[1]
 	end
-	if branch and branch ~= "" then
-		return branch
-	end
-	local h2 = io.popen("git rev-parse --short HEAD 2>/dev/null")
-	local sha = h2 and h2:read("*l")
-	if h2 then
-		h2:close()
-	end
-	return sha or "HEAD"
+	local sha = _G.git_review.git({ "rev-parse", "--short", "HEAD" })
+	return sha and sha[1] or "HEAD"
 end
 
 function _G.git_review.get_or_create_comments_buf(target, base)
@@ -794,18 +841,20 @@ function _G.git_review.start(picked_branch)
 	_G.git_review.state.target = target
 	_G.git_review.state.base = base
 
-	-- Commits on current branch against the picked branch (base..target)
-	local cmd = string.format("git log --format=%%h%%x09%%s --reverse %s..%s 2>/dev/null", base, target)
-	local handle = io.popen(cmd)
+	-- Commits on current branch against the picked branch (base..target), with their parents in a single call.
 	local commits = {}
-	if handle then
-		for line in handle:lines() do
-			local hash, subject = line:match("^(%w+)%s+(.*)$")
-			if hash and subject then
-				table.insert(commits, { hash = hash, subject = subject })
-			end
+	local lines = _G.git_review.git({
+		"log",
+		"--format=%h%x09%P%x09%s",
+		"--reverse",
+		"--end-of-options",
+		base .. ".." .. target,
+	}) or {}
+	for _, line in ipairs(lines) do
+		local hash, parents, subject = line:match("^(%w+)\t([^\t]*)\t(.*)$")
+		if hash then
+			table.insert(commits, { hash = hash, has_parent = parents ~= "", subject = subject })
 		end
-		handle:close()
 	end
 
 	if #commits == 0 then
@@ -820,8 +869,7 @@ function _G.git_review.start(picked_branch)
 	}
 
 	for i, c in ipairs(commits) do
-		local has_parent = os.execute("git rev-parse --verify --quiet " .. c.hash .. "~1 >/dev/null 2>&1") == 0
-		local rev = has_parent and (c.hash .. "~1.." .. c.hash) or c.hash
+		local rev = c.has_parent and (c.hash .. "~1.." .. c.hash) or c.hash
 		table.insert(qf_items, {
 			text = string.format("[%s] %s", c.hash, c.subject),
 			user_data = { rev = rev, commit = c.hash, idx = i + 1 },
@@ -835,20 +883,26 @@ function _G.git_review.start(picked_branch)
 end
 
 function _G.git_review.pick_branch()
-	require("telescope.builtin").git_branches({
-		attach_mappings = function(prompt_bufnr, _)
-			local actions = require("telescope.actions")
-			local action_state = require("telescope.actions.state")
-			actions.select_default:replace(function()
-				actions.close(prompt_bufnr)
-				local selection = action_state.get_selected_entry()
-				local branch = selection and (selection.value or selection.name or selection[1])
-				if branch then
+	local branches = _G.git_review.git({
+		"for-each-ref",
+		"--format=%(refname:short)",
+		"refs/heads",
+		"refs/remotes",
+	})
+	if not branches or #branches == 0 then
+		vim.notify("GitReview: no branches found (not in a git repository?)", vim.log.levels.WARN)
+		return
+	end
+	MiniPick.start({
+		source = {
+			name = "Review against branch",
+			items = branches,
+			choose = function(branch)
+				vim.schedule(function()
 					_G.git_review.start(branch)
-				end
-			end)
-			return true
-		end,
+				end)
+			end,
+		},
 	})
 end
 
@@ -913,7 +967,7 @@ function _G.git_review.add_comment(line1, line2)
 	local bufname = vim.api.nvim_buf_get_name(0)
 	local ft = vim.bo.filetype
 
-	local toplevel = vim.fn.systemlist("git rev-parse --show-toplevel")[1] or ""
+	local toplevel = (_G.git_review.git({ "rev-parse", "--show-toplevel" }) or {})[1] or ""
 	local repo_name = (toplevel ~= "") and vim.fs.basename(toplevel) or ""
 
 	local rel_path = ""
@@ -1034,18 +1088,6 @@ require("gitsigns").setup({
 		map("n", "<leader>hD", function()
 			gitsigns.diffthis("@")
 		end, { desc = "git [D]iff against last commit" })
-		map({ "v", "n", "o" }, "<leader>hB", function()
-			_G.git_review.pick_branch()
-		end, { desc = "git review [B]ranch (qflist commits + diff + comments)" })
-		map("n", "<leader>hc", function()
-			_G.git_review.toggle_comments()
-		end, { desc = "git review toggle [c]omments buffer" })
-		map({ "n", "x" }, "<leader>hn", function()
-			_G.git_review.add_comment()
-		end, { desc = "git review add [n]ote for line or range" })
-		map("n", "<leader>hx", function()
-			_G.git_review.close()
-		end, { desc = "git review close [x] session" })
 		map("n", "<leader>hQ", function()
 			gitsigns.setqflist("all")
 		end, { desc = "git hunk [Q]uickfix list (all files in repo)" })
