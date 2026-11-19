@@ -18,6 +18,9 @@
 		base=$(git merge-base HEAD $1); \
 		git rebase --interactive $base; \
 	}; f $1"
+	changes = diff --name-status
+	incoming = !git fetch && git log ..@{u} --oneline
+	outgoing = log @{u}.. --oneline
 [push]
 	followTags = true
 [merge]

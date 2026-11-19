@@ -86,6 +86,9 @@ vim.o.shiftwidth = 4
 -- Ask for confirmations.
 vim.o.confirm = true
 
+-- Enable project-local configuration (.nvim.lua, .exrc)
+vim.o.exrc = true
+
 -- Clear search highlight on <Esc>.
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
@@ -112,7 +115,7 @@ vim.diagnostic.config({
 })
 
 -- Diagnostic keymaps.
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Terminal keymaps.
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -475,7 +478,13 @@ vim.pack.add({
 })
 
 vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Toggle [E]xplorer" })
-require("neo-tree").setup({})
+require("neo-tree").setup({
+	window = {
+		mappings = {
+			["C"] = "close_all_subnodes",
+		},
+	},
+})
 
 vim.pack.add({ { src = gh("L3MON4D3/LuaSnip"), version = vim.version.range("2.*") } })
 require("luasnip").setup({})
@@ -717,6 +726,22 @@ require("gitsigns").setup({
 		map("n", "<leader>hD", function()
 			gitsigns.diffthis("@")
 		end, { desc = "git [D]iff against last commit" })
+		map("n", "<leader>hB", function()
+			require("telescope.builtin").git_branches({
+				attach_mappings = function(prompt_bufnr, _)
+					local actions = require("telescope.actions")
+					local action_state = require("telescope.actions.state")
+					actions.select_default:replace(function()
+						actions.close(prompt_bufnr)
+						local selection = action_state.get_selected_entry()
+						if selection then
+							gitsigns.diff(selection.value[0])
+						end
+					end)
+					return true
+				end,
+			})
+		end, { desc = "git diff against [B]ranch" })
 		map("n", "<leader>hQ", function()
 			gitsigns.setqflist("all")
 		end, { desc = "git hunk [Q]uickfix list (all files in repo)" })
@@ -736,5 +761,4 @@ require("which-key").setup()
 
 -- Fugitive
 vim.pack.add({ gh("tpope/vim-fugitive") })
-
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git)

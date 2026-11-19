@@ -23,6 +23,8 @@ set -x PATH $HOME/.deno/bin $PATH
 set -x PATH $HOME/.local/bin $PATH
 set -x PATH $HOME/Library/Android/sdk/platform-tools $PATH
 set -x PATH $HOME/Library/Android/sdk/tools/bin $PATH
+set -x PATH $(go env GOPATH) $PATH
+set -x PATH $HOME/.local/share/nvim/mason/bin $PATH
 
 # XDG Base Directories
 set -x XDG_DATA_HOME "$HOME/.local/share"
@@ -35,7 +37,7 @@ set -x XDG_RUNTIME_DIR "/tmp/run/user/$UID"
 set -x ANDROID_USER_HOME "$XDG_DATA_HOME/android"
 set -x ANSIBLE_HOME "$XDG_DATA_HOME/ansible"
 set -x CARGO_HOME "$XDG_DATA_HOME/cargo"
-set -x DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
+# set -x DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 set -x GNUPGHOME "$XDG_DATA_HOME/gnupg"
 set -x GOPATH "$XDG_DATA_HOME/go"
 set -x TERMINFO "$XDG_DATA_HOME"/terminfo
@@ -58,3 +60,9 @@ bind \cx\ce edit_command_buffer
 
 # Fzf
 fzf --fish | source
+
+# Zoxide
+zoxide init fish | source
+
+# Mise.
+mise activate fish | source
