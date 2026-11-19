@@ -133,8 +133,20 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- Quickfix navigation and toggle.
-vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
-vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "<C-n>", function()
+	if _G.git_review and _G.git_review.nav then
+		_G.git_review.nav(1)
+	else
+		pcall(vim.cmd.cnext)
+	end
+end, { desc = "Next quickfix item (or review commit)" })
+vim.keymap.set("n", "<C-p>", function()
+	if _G.git_review and _G.git_review.nav then
+		_G.git_review.nav(-1)
+	else
+		pcall(vim.cmd.cprev)
+	end
+end, { desc = "Previous quickfix item (or review commit)" })
 vim.keymap.set("n", "<leader>cq", function()
 	local qf_win = vim.fn.getqflist({ winid = 0 }).winid
 	if qf_win ~= 0 then
@@ -670,6 +682,302 @@ require("dap-go").setup({
 -- Adds git related signs to the gutter, as well as utilities for managing changes
 vim.pack.add({ gh("lewis6991/gitsigns.nvim") })
 
+-- Git Review with Quickfix commits navigation & Comments buffer
+_G.git_review = {
+	state = {
+		active = false,
+		target = nil,
+		base = nil,
+		review_tab = nil,
+		comments_buf = nil,
+		comments_win = nil,
+		qf_win = nil,
+	},
+}
+
+function _G.git_review.get_current_branch()
+	local handle = io.popen("git symbolic-ref --short HEAD 2>/dev/null")
+	local branch = handle and handle:read("*l")
+	if handle then
+		handle:close()
+	end
+	if branch and branch ~= "" then
+		return branch
+	end
+	local h2 = io.popen("git rev-parse --short HEAD 2>/dev/null")
+	local sha = h2 and h2:read("*l")
+	if h2 then
+		h2:close()
+	end
+	return sha or "HEAD"
+end
+
+function _G.git_review.get_or_create_comments_buf(target, base)
+	if _G.git_review.state.comments_buf and vim.api.nvim_buf_is_valid(_G.git_review.state.comments_buf) then
+		return _G.git_review.state.comments_buf
+	end
+	local buf = vim.api.nvim_create_buf(true, false)
+	vim.bo[buf].buftype = "nofile"
+	vim.bo[buf].filetype = "markdown"
+	vim.bo[buf].bufhidden = "hide"
+	vim.bo[buf].swapfile = false
+	pcall(vim.api.nvim_buf_set_name, buf, "review_comments.md")
+	local lines = {
+		"# Code Review: " .. (target or "Current Branch") .. " against " .. (base or "Picked Branch"),
+		"- **Current Branch**: " .. (target or "HEAD"),
+		"- **Base (Picked)**: " .. (base or "origin/main"),
+		"- **Date**: " .. os.date("%Y-%m-%d %H:%M"),
+		"",
+		"## Comments & Notes",
+		"",
+	}
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+	_G.git_review.state.comments_buf = buf
+	return buf
+end
+
+function _G.git_review.update_diff(rev, item_index)
+	local old_tab = _G.git_review.state.review_tab
+	local gs = require("gitsigns")
+	gs.diff(rev, nil, nil, function(err)
+		if err then
+			vim.notify("GitReview diff error: " .. tostring(err), vim.log.levels.WARN)
+			return
+		end
+		local new_tab = vim.api.nvim_get_current_tabpage()
+		_G.git_review.state.review_tab = new_tab
+
+		if old_tab and old_tab ~= new_tab and vim.api.nvim_tabpage_is_valid(old_tab) then
+			pcall(function()
+				vim.api.nvim_set_current_tabpage(old_tab)
+				vim.cmd("tabclose")
+				vim.api.nvim_set_current_tabpage(new_tab)
+			end)
+		end
+
+		vim.cmd("botright copen 5")
+		_G.git_review.state.qf_win = vim.api.nvim_get_current_win()
+		if item_index then
+			pcall(vim.api.nvim_win_set_cursor, _G.git_review.state.qf_win, { item_index, 0 })
+		end
+
+		local cbuf = _G.git_review.get_or_create_comments_buf(_G.git_review.state.target, _G.git_review.state.base)
+		local found_win = nil
+		for _, w in ipairs(vim.api.nvim_tabpage_list_wins(new_tab)) do
+			if vim.api.nvim_win_get_buf(w) == cbuf then
+				found_win = w
+				break
+			end
+		end
+		if not found_win then
+			vim.cmd("botright 42vsplit")
+			found_win = vim.api.nvim_get_current_win()
+			vim.api.nvim_win_set_buf(found_win, cbuf)
+			vim.wo[found_win].wrap = true
+			vim.wo[found_win].number = false
+			vim.wo[found_win].relativenumber = false
+		end
+		_G.git_review.state.comments_win = found_win
+	end)
+end
+
+function _G.git_review.start(picked_branch)
+	if not picked_branch or picked_branch == "" then
+		_G.git_review.pick_branch()
+		return
+	end
+	local current_branch = _G.git_review.get_current_branch()
+	local base = picked_branch
+	local target = current_branch
+
+	_G.git_review.state.active = true
+	_G.git_review.state.target = target
+	_G.git_review.state.base = base
+
+	-- Commits on current branch against the picked branch (base..target)
+	local cmd = string.format("git log --format=%%h%%x09%%s --reverse %s..%s 2>/dev/null", base, target)
+	local handle = io.popen(cmd)
+	local commits = {}
+	if handle then
+		for line in handle:lines() do
+			local hash, subject = line:match("^(%w+)%s+(.*)$")
+			if hash and subject then
+				table.insert(commits, { hash = hash, subject = subject })
+			end
+		end
+		handle:close()
+	end
+
+	if #commits == 0 then
+		vim.notify("GitReview: No commits found on " .. target .. " ahead of " .. base, vim.log.levels.INFO)
+	end
+
+	local qf_items = {
+		{
+			text = string.format("[ALL] Full diff (%s vs %s)", target, base),
+			user_data = { rev = base .. "..." .. target, idx = 1 },
+		},
+	}
+
+	for i, c in ipairs(commits) do
+		local has_parent = os.execute("git rev-parse --verify --quiet " .. c.hash .. "~1 >/dev/null 2>&1") == 0
+		local rev = has_parent and (c.hash .. "~1.." .. c.hash) or c.hash
+		table.insert(qf_items, {
+			text = string.format("[%s] %s", c.hash, c.subject),
+			user_data = { rev = rev, commit = c.hash, idx = i + 1 },
+		})
+	end
+
+	vim.fn.setqflist(qf_items, "r")
+	vim.fn.setqflist({}, "a", { title = "GitReview: " .. target .. " vs " .. base })
+
+	_G.git_review.update_diff(qf_items[1].user_data.rev, 1)
+end
+
+function _G.git_review.pick_branch()
+	require("telescope.builtin").git_branches({
+		attach_mappings = function(prompt_bufnr, _)
+			local actions = require("telescope.actions")
+			local action_state = require("telescope.actions.state")
+			actions.select_default:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local branch = selection and (selection.value or selection.name or selection[1])
+				if branch then
+					_G.git_review.start(branch)
+				end
+			end)
+			return true
+		end,
+	})
+end
+
+function _G.git_review.nav(dir)
+	local info = vim.fn.getqflist({ title = 0, idx = 0, items = 0 })
+	if not info.title or not info.title:match("^GitReview:") then
+		if dir > 0 then
+			pcall(vim.cmd.cnext)
+		else
+			pcall(vim.cmd.cprev)
+		end
+		return
+	end
+
+	local new_idx = info.idx + dir
+	if new_idx < 1 or new_idx > #info.items then
+		vim.notify("GitReview: Reached end of commit list", vim.log.levels.INFO)
+		return
+	end
+
+	pcall(vim.cmd, "cc " .. new_idx)
+	local item = info.items[new_idx]
+	if item and item.user_data and item.user_data.rev then
+		_G.git_review.update_diff(item.user_data.rev, new_idx)
+	end
+end
+
+function _G.git_review.toggle_comments()
+	local cbuf = _G.git_review.get_or_create_comments_buf(_G.git_review.state.target, _G.git_review.state.base)
+	for _, w in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+		if vim.api.nvim_win_get_buf(w) == cbuf then
+			vim.api.nvim_win_close(w, true)
+			return
+		end
+	end
+	vim.cmd("botright 42vsplit")
+	local w = vim.api.nvim_get_current_win()
+	vim.api.nvim_win_set_buf(w, cbuf)
+	vim.wo[w].wrap = true
+end
+
+function _G.git_review.add_comment(line1, line2)
+	local s, e
+	if line1 and line2 and line1 > 0 then
+		s, e = line1, line2
+	else
+		local mode = vim.fn.mode()
+		if mode == "v" or mode == "V" or mode == "\22" then
+			s = vim.fn.line("v")
+			e = vim.fn.line(".")
+			if s > e then
+				s, e = e, s
+			end
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+		else
+			s = vim.fn.line(".")
+			e = s
+		end
+	end
+
+	local cbuf = _G.git_review.get_or_create_comments_buf(_G.git_review.state.target, _G.git_review.state.base)
+	local bufname = vim.api.nvim_buf_get_name(0)
+	local ft = vim.bo.filetype
+
+	local toplevel = vim.fn.systemlist("git rev-parse --show-toplevel")[1] or ""
+	local repo_name = (toplevel ~= "") and vim.fs.basename(toplevel) or ""
+
+	local rel_path = ""
+	local gs_path = bufname:match("^gitsigns://.-:(.+)$")
+	if gs_path then
+		rel_path = gs_path
+	elseif toplevel ~= "" and vim.startswith(bufname, toplevel .. "/") then
+		rel_path = bufname:sub(#toplevel + 2)
+	else
+		rel_path = vim.fn.expand("%:~:.")
+	end
+	if rel_path == "" then
+		rel_path = "General"
+	end
+
+	local loc = (s == e) and tostring(s) or string.format("%d-%d", s, e)
+	local title = (repo_name ~= "" and (repo_name .. " - ") or "") .. rel_path .. ":" .. loc
+
+	local header = string.format("\n### `%s`\n", title)
+	if s ~= e and (e - s + 1) <= 12 then
+		local snippet_lines = vim.api.nvim_buf_get_lines(0, s - 1, e, false)
+		header = header .. "```" .. (ft ~= "" and ft or "") .. "\n" .. table.concat(snippet_lines, "\n") .. "\n```\n"
+	end
+	header = header .. "- "
+
+	local lines = vim.split(header, "\n")
+	local cur_lines = vim.api.nvim_buf_get_lines(cbuf, 0, -1, false)
+	for _, l in ipairs(lines) do
+		table.insert(cur_lines, l)
+	end
+	vim.api.nvim_buf_set_lines(cbuf, 0, -1, false, cur_lines)
+
+	local found_win = nil
+	for _, w in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+		if vim.api.nvim_win_get_buf(w) == cbuf then
+			found_win = w
+			break
+		end
+	end
+	if not found_win then
+		vim.cmd("botright 42vsplit")
+		found_win = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_set_buf(found_win, cbuf)
+		vim.wo[found_win].wrap = true
+	end
+	vim.api.nvim_set_current_win(found_win)
+	local count = vim.api.nvim_buf_line_count(cbuf)
+	pcall(vim.api.nvim_win_set_cursor, found_win, { count, #cur_lines[count] })
+	vim.cmd("startinsert!")
+end
+
+function _G.git_review.close()
+	if _G.git_review.state.review_tab and vim.api.nvim_tabpage_is_valid(_G.git_review.state.review_tab) then
+		pcall(function()
+			vim.api.nvim_set_current_tabpage(_G.git_review.state.review_tab)
+			vim.cmd("tabclose")
+		end)
+	end
+	vim.cmd("cclose")
+	_G.git_review.state.active = false
+	_G.git_review.state.review_tab = nil
+	vim.notify("GitReview session closed", vim.log.levels.INFO)
+end
+
 require("gitsigns").setup({
 	signs = {
 		add = { text = "+" }, ---@diagnostic disable-line: missing-fields
@@ -726,22 +1034,18 @@ require("gitsigns").setup({
 		map("n", "<leader>hD", function()
 			gitsigns.diffthis("@")
 		end, { desc = "git [D]iff against last commit" })
-		map("n", "<leader>hB", function()
-			require("telescope.builtin").git_branches({
-				attach_mappings = function(prompt_bufnr, _)
-					local actions = require("telescope.actions")
-					local action_state = require("telescope.actions.state")
-					actions.select_default:replace(function()
-						actions.close(prompt_bufnr)
-						local selection = action_state.get_selected_entry()
-						if selection then
-							gitsigns.diff(selection.value[0])
-						end
-					end)
-					return true
-				end,
-			})
-		end, { desc = "git diff against [B]ranch" })
+		map({ "v", "n", "o" }, "<leader>hB", function()
+			_G.git_review.pick_branch()
+		end, { desc = "git review [B]ranch (qflist commits + diff + comments)" })
+		map("n", "<leader>hc", function()
+			_G.git_review.toggle_comments()
+		end, { desc = "git review toggle [c]omments buffer" })
+		map({ "n", "x" }, "<leader>hn", function()
+			_G.git_review.add_comment()
+		end, { desc = "git review add [n]ote for line or range" })
+		map("n", "<leader>hx", function()
+			_G.git_review.close()
+		end, { desc = "git review close [x] session" })
 		map("n", "<leader>hQ", function()
 			gitsigns.setqflist("all")
 		end, { desc = "git hunk [Q]uickfix list (all files in repo)" })
@@ -754,6 +1058,63 @@ require("gitsigns").setup({
 		map({ "o", "x" }, "ih", gitsigns.select_hunk)
 	end,
 })
+
+-- Quickfix FileType autocmd for GitReview commit diff switching
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "qf",
+	callback = function(args)
+		local info = vim.fn.getqflist({ title = 0 })
+		if info.title and info.title:match("^GitReview:") then
+			local function qf_jump()
+				local line = vim.fn.line(".")
+				local items = vim.fn.getqflist({ items = 0 }).items
+				local item = items[line]
+				if item and item.user_data and item.user_data.rev then
+					pcall(vim.cmd, "cc " .. line)
+					_G.git_review.update_diff(item.user_data.rev, line)
+				else
+					vim.cmd.normal({ "<CR>", bang = true })
+				end
+			end
+			vim.keymap.set("n", "<CR>", qf_jump, { buffer = args.buf, silent = true, desc = "Review commit diff" })
+			vim.keymap.set("n", "o", qf_jump, { buffer = args.buf, silent = true, desc = "Review commit diff" })
+		end
+	end,
+})
+
+-- Global GitReview commands and keymaps
+vim.api.nvim_create_user_command("GitReview", function(opts)
+	if opts.args and opts.args ~= "" then
+		_G.git_review.start(opts.args)
+	else
+		_G.git_review.pick_branch()
+	end
+end, { nargs = "?", desc = "Start git review for branch" })
+
+vim.api.nvim_create_user_command("GitReviewClose", function()
+	_G.git_review.close()
+end, { desc = "Close git review session" })
+
+vim.api.nvim_create_user_command("GitReviewComments", function()
+	_G.git_review.toggle_comments()
+end, { desc = "Toggle git review comments buffer" })
+
+vim.api.nvim_create_user_command("GitReviewComment", function(opts)
+	_G.git_review.add_comment(opts.line1, opts.line2)
+end, { range = true, desc = "Add review comment for current line or range" })
+
+vim.keymap.set("n", "<leader>hB", function()
+	_G.git_review.pick_branch()
+end, { desc = "git review [B]ranch (qflist commits + diff + comments)" })
+vim.keymap.set("n", "<leader>hc", function()
+	_G.git_review.toggle_comments()
+end, { desc = "git review toggle [c]omments buffer" })
+vim.keymap.set({ "n", "x" }, "<leader>hn", function()
+	_G.git_review.add_comment()
+end, { desc = "git review add [n]ote for line or range" })
+vim.keymap.set("n", "<leader>hx", function()
+	_G.git_review.close()
+end, { desc = "git review close [x] session" })
 
 -- Which-key
 vim.pack.add({ gh("folke/which-key.nvim") })
