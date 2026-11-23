@@ -81,7 +81,7 @@ brew install --cask \
 # Installed outside Homebrew:
 #   rex      - https://rex.superlogical.com (config: dotfiles/rex)
 
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tpm ~/.local/share/tmux/plugins/tpm
 
 mas install 1518036000  # Sequel Ace
 mas install 1662217862  # Wipr
