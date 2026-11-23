@@ -36,16 +36,22 @@ set -x XDG_CACHE_HOME "$HOME/.cache"
 # Application-specific directories
 set -x ANDROID_USER_HOME "$XDG_DATA_HOME/android"
 set -x ANSIBLE_HOME "$XDG_DATA_HOME/ansible"
+set -x AWS_CONFIG_FILE "$XDG_CONFIG_HOME/aws/config"
+set -x AWS_SHARED_CREDENTIALS_FILE "$XDG_CONFIG_HOME/aws/credentials"
 set -x CARGO_HOME "$XDG_DATA_HOME/cargo"
 # set -x DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 set -x GNUPGHOME "$XDG_DATA_HOME/gnupg"
 set -x GOPATH "$XDG_DATA_HOME/go"
+set -x NPM_CONFIG_CACHE "$XDG_CACHE_HOME/npm"
+set -x NPM_CONFIG_INIT_MODULE "$XDG_CONFIG_HOME/npm/config/npm-init.js"
+set -x PI_CODING_AGENT_DIR "$XDG_CONFIG_HOME/pi/agent"
 set -x TERMINFO "$XDG_DATA_HOME"/terminfo
 set -x TERMINFO_DIRS "$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
 
 # History files
 set -x HISTFILE "$XDG_STATE_HOME/zsh/history"
 set -x LESSHISTFILE "$XDG_STATE_HOME/less/history"
+set -x PYTHON_HISTORY "$XDG_STATE_HOME/python_history"
 
 # Load functions
 for file in (ls ~/.config/fish/functions/*.fish)
