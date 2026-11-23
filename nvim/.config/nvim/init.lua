@@ -255,13 +255,6 @@ vim.api.nvim_create_autocmd("PackChanged", {
 			return
 		end
 
-		if name == "LuaSnip" then
-			if vim.fn.has("win32") ~= 1 and vim.fn.executable("make") == 1 then
-				run_build(name, { "make", "install_jsregexp" }, ev.data.path)
-			end
-			return
-		end
-
 		if name == "nvim-treesitter" then
 			if not ev.data.active then
 				vim.cmd.packadd("nvim-treesitter")
@@ -281,12 +274,17 @@ end
 vim.pack.add({ gh("NMAC427/guess-indent.nvim") })
 require("guess-indent").setup({})
 
--- Todo comments.
-vim.pack.add({ gh("nvim-lua/plenary.nvim"), gh("folke/todo-comments.nvim") })
-require("todo-comments").setup({ signs = false })
-
 -- Mini.nvim.
 vim.pack.add({ gh("nvim-mini/mini.nvim") })
+-- Highlight TODO-like keywords.
+require("mini.hipatterns").setup({
+	highlighters = {
+		fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+		hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+		todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+		note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+	},
+})
 if vim.g.have_nerd_font then
 	require("mini.icons").setup()
 	-- Used for backwards compatibility with plugins that require `nvim-web-devicons`
@@ -341,6 +339,26 @@ vim.keymap.set("n", "<leader>fu", MiniExtra.pickers.oldfiles, { desc = "[F]ind [
 vim.keymap.set("n", "<leader>fC", MiniExtra.pickers.commands, { desc = "[F]ind [C]ommands" })
 vim.keymap.set("n", "<leader>fb", MiniPick.builtin.buffers, { desc = "[F]ind [B]uffers" })
 
+vim.keymap.set("n", "<leader>f/", '<Cmd>Pick history scope="/"<CR>', { desc = '"/" history' })
+vim.keymap.set("n", "<leader>f:", '<Cmd>Pick history scope=":"<CR>', { desc = '":" history' })
+vim.keymap.set("n", "<leader>fa", '<Cmd>Pick git_hunks scope="staged"<CR>', { desc = "Added hunks (all)" })
+vim.keymap.set("n", "<leader>fA", '<Cmd>Pick git_hunks path="%" scope="staged"<CR>', { desc = "Added hunks (buf)" })
+vim.keymap.set("n", "<leader>fc", "<Cmd>Pick git_commits<CR>", { desc = "Commits (all)" })
+vim.keymap.set("n", "<leader>fD", '<Cmd>Pick diagnostic scope="current"<CR>', { desc = "Diagnostic buffer" })
+vim.keymap.set("n", "<leader>fH", "<Cmd>Pick hl_groups<CR>", { desc = "Highlight groups" })
+vim.keymap.set("n", "<leader>fl", '<Cmd>Pick buf_lines scope="all"<CR>', { desc = "Lines (all)" })
+vim.keymap.set("n", "<leader>fL", '<Cmd>Pick buf_lines scope="current"<CR>', { desc = "Lines (buf)" })
+vim.keymap.set("n", "<leader>fm", "<Cmd>Pick git_hunks<CR>", { desc = "Modified hunks (all)" })
+vim.keymap.set("n", "<leader>fM", '<Cmd>Pick git_hunks path="%"<CR>', { desc = "Modified hunks (buf)" })
+vim.keymap.set("n", "<leader>fR", '<Cmd>Pick lsp scope="references"<CR>', { desc = "References (LSP)" })
+vim.keymap.set(
+	"n",
+	"<leader>fs",
+	'<Cmd>Pick lsp scope="workspace_symbol_live"<CR>',
+	{ desc = "Symbols workspace (live)" }
+)
+vim.keymap.set("n", "<leader>fS", '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = "Symbols document" })
+
 vim.keymap.set("n", "<leader>/", function()
 	MiniExtra.pickers.buf_lines({ scope = "current" })
 end, { desc = "[/] Fuzzily search in current buffer" })
@@ -353,9 +371,8 @@ vim.keymap.set("n", "<leader>e", function()
 	end
 end, { desc = "Toggle [E]xplorer" })
 
--- LSP.
-vim.pack.add({ gh("j-hui/fidget.nvim") })
-require("fidget").setup({})
+-- Notifications and LSP progress.
+require("mini.notify").setup()
 
 -- Cleanup for LSP document highlights. Created once (not per attach) so every buffer keeps its cleanup.
 vim.api.nvim_create_autocmd("LspDetach", {
@@ -515,10 +532,11 @@ vim.keymap.set({ "n", "v" }, "<leader>cf", function()
 	require("conform").format({ async = true })
 end, { desc = "[C]ode [F]ormat buffer" })
 
-vim.pack.add({ { src = gh("L3MON4D3/LuaSnip"), version = vim.version.range("2.*") } })
-require("luasnip").setup({})
+-- Snippets, loaded from friendly-snippets.
 vim.pack.add({ gh("rafamadriz/friendly-snippets") })
-require("luasnip.loaders.from_vscode").lazy_load()
+require("mini.snippets").setup({
+	snippets = { require("mini.snippets").gen_loader.from_lang() },
+})
 
 vim.pack.add({ { src = gh("saghen/blink.cmp"), version = vim.version.range("1.*") } })
 require("blink.cmp").setup({
@@ -540,7 +558,7 @@ require("blink.cmp").setup({
 			lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
 		},
 	},
-	snippets = { preset = "luasnip" },
+	snippets = { preset = "mini_snippets" },
 	fuzzy = { implementation = "lua" },
 	signature = { enabled = true },
 })
@@ -760,10 +778,160 @@ function _G.git_review.get_or_create_comments_buf(target, base)
 	return buf
 end
 
+-- Split a rev into (left, right): `a...b` uses the merge-base, a bare commit is a root (left = nil).
+function _G.git_review.resolve_range(rev)
+	local a, b = rev:match("^(.-)%.%.%.(.+)$")
+	if a then
+		local mb = _G.git_review.git({ "merge-base", a, b })
+		return (mb and mb[1]) or a, b
+	end
+	a, b = rev:match("^(.-)%.%.(.+)$")
+	if a then
+		return a, b
+	end
+	return nil, rev
+end
+
+-- Changed files as { status, path, added, removed }; nil if git failed.
+function _G.git_review.changed_files(left, right)
+	local lines
+	if left then
+		lines = _G.git_review.git({ "diff", "--name-status", "--no-renames", left, right })
+	else
+		lines = _G.git_review.git({ "diff-tree", "--root", "--no-commit-id", "--name-status", "-r", "--no-renames", right })
+	end
+	if not lines then
+		return nil
+	end
+	local files, by_path = {}, {}
+	for _, line in ipairs(lines) do
+		local status, path = line:match("^(%a)\t(.+)$")
+		if status then
+			local f = { status = status, path = path }
+			table.insert(files, f)
+			by_path[path] = f
+		end
+	end
+
+	local stat_lines
+	if left then
+		stat_lines = _G.git_review.git({ "diff", "--numstat", "--no-renames", left, right })
+	else
+		stat_lines = _G.git_review.git({ "diff-tree", "--root", "--no-commit-id", "--numstat", "-r", "--no-renames", right })
+	end
+	for _, line in ipairs(stat_lines or {}) do
+		local added, removed, path = line:match("^(%S+)\t(%S+)\t(.+)$")
+		local f = path and by_path[path]
+		if f then
+			f.added, f.removed = tonumber(added), tonumber(removed)
+		end
+	end
+	return files
+end
+
+local function review_scratch_buf(name, lines, path)
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.bo[buf].buftype = "nofile"
+	vim.bo[buf].bufhidden = "wipe"
+	vim.bo[buf].swapfile = false
+	pcall(vim.api.nvim_buf_set_name, buf, name)
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+	vim.bo[buf].modifiable = false
+	local ft = path ~= "" and vim.filetype.match({ filename = path }) or nil
+	if ft then
+		vim.bo[buf].filetype = ft
+	end
+	return buf
+end
+
+-- Open a tab with a file panel and a side-by-side diff. Buffers: `review://<side>:<path>`.
+function _G.git_review.open_diff(rev, cb)
+	local left, right = _G.git_review.resolve_range(rev)
+	local files = _G.git_review.changed_files(left, right)
+	if not files then
+		return cb("could not list changed files for " .. rev)
+	end
+	if #files == 0 then
+		return cb("no changed files in " .. rev)
+	end
+
+	local status_hl = { A = "Added", D = "Removed", M = "Changed" }
+	local panel_lines, marks = {}, {}
+	for i, f in ipairs(files) do
+		local line = f.status .. "  " .. f.path
+		marks[i] = { { 0, 1, status_hl[f.status] or "Changed" } }
+		if f.added then
+			local plus, minus = "+" .. f.added, "-" .. f.removed
+			table.insert(marks[i], { #line + 2, #line + 2 + #plus, "Added" })
+			table.insert(marks[i], { #line + 3 + #plus, #line + 3 + #plus + #minus, "Removed" })
+			line = line .. "  " .. plus .. " " .. minus
+		end
+		panel_lines[i] = line
+	end
+
+	vim.cmd("tabnew")
+	local panel_win = vim.api.nvim_get_current_win()
+	local files_buf = review_scratch_buf("review://files", panel_lines, "")
+	local ns = vim.api.nvim_create_namespace("git_review_panel")
+	for i, row in ipairs(marks) do
+		for _, m in ipairs(row) do
+			vim.api.nvim_buf_set_extmark(files_buf, ns, i - 1, m[1], { end_col = m[2], hl_group = m[3] })
+		end
+	end
+	vim.api.nvim_win_set_buf(panel_win, files_buf)
+	vim.api.nvim_win_set_width(panel_win, 44)
+	vim.wo[panel_win].winfixwidth = true
+	vim.wo[panel_win].number = false
+	vim.wo[panel_win].relativenumber = false
+	vim.wo[panel_win].cursorline = true
+	vim.cmd("rightbelow vsplit")
+	local base_win = vim.api.nvim_get_current_win()
+	vim.cmd("rightbelow vsplit")
+	local target_win = vim.api.nvim_get_current_win()
+	local panel_buf = vim.api.nvim_win_get_buf(panel_win)
+
+	local function blob(r, status_skips, f)
+		if not r or f.status == status_skips then
+			return {}
+		end
+		return _G.git_review.git({ "show", r .. ":" .. f.path }) or {}
+	end
+
+	local function show_file(idx)
+		local f = files[idx]
+		if not f then
+			return
+		end
+		for _, w in ipairs({ base_win, target_win }) do
+			vim.api.nvim_win_call(w, function()
+				vim.cmd("diffoff")
+			end)
+		end
+		local base_buf = review_scratch_buf("review://base:" .. f.path, blob(left, "A", f), f.path)
+		local target_buf = review_scratch_buf("review://target:" .. f.path, blob(right, "D", f), f.path)
+		vim.api.nvim_win_set_buf(base_win, base_buf)
+		vim.api.nvim_win_set_buf(target_win, target_buf)
+		for _, w in ipairs({ base_win, target_win }) do
+			vim.api.nvim_win_call(w, function()
+				vim.cmd("diffthis")
+			end)
+		end
+		vim.api.nvim_set_current_win(target_win)
+	end
+
+	for _, lhs in ipairs({ "<CR>", "o" }) do
+		vim.keymap.set("n", lhs, function()
+			show_file(vim.fn.line("."))
+		end, { buffer = panel_buf, silent = true, desc = "Review: show file diff" })
+	end
+
+	show_file(1)
+	cb(nil)
+end
+
 function _G.git_review.update_diff(rev, item_index)
 	local old_tab = _G.git_review.state.review_tab
-	local gs = require("gitsigns")
-	gs.diff(rev, nil, nil, function(err)
+	_G.git_review.open_diff(rev, function(err)
 		if err then
 			vim.notify("GitReview diff error: " .. tostring(err), vim.log.levels.WARN)
 			return
@@ -948,7 +1116,7 @@ function _G.git_review.add_comment(line1, line2)
 	local repo_name = (toplevel ~= "") and vim.fs.basename(toplevel) or ""
 
 	local rel_path = ""
-	local gs_path = bufname:match("^gitsigns://.-:(.+)$")
+	local gs_path = bufname:match("^review://[^:]+:(.+)$")
 	if gs_path then
 		rel_path = gs_path
 	elseif toplevel ~= "" and vim.startswith(bufname, toplevel .. "/") then
@@ -1135,10 +1303,32 @@ vim.keymap.set("n", "<leader>hx", function()
 	_G.git_review.close()
 end, { desc = "git review close [x] session" })
 
--- Which-key
-vim.pack.add({ gh("folke/which-key.nvim") })
-require("which-key").setup()
+-- Key hints.
+local miniclue = require("mini.clue")
+miniclue.setup({
+	triggers = {
+		{ mode = "n", keys = "<Leader>" },
+		{ mode = "x", keys = "<Leader>" },
+		{ mode = "n", keys = "g" },
+		{ mode = "x", keys = "g" },
+		{ mode = "n", keys = "[" },
+		{ mode = "n", keys = "]" },
+		{ mode = "n", keys = "'" },
+		{ mode = "n", keys = "`" },
+		{ mode = "n", keys = '"' },
+		{ mode = "n", keys = "z" },
+		{ mode = "x", keys = "z" },
+	},
+	clues = {
+		miniclue.gen_clues.builtin_completion(),
+		miniclue.gen_clues.g(),
+		miniclue.gen_clues.marks(),
+		miniclue.gen_clues.registers(),
+		miniclue.gen_clues.windows(),
+		miniclue.gen_clues.z(),
+	},
+})
 
--- Fugitive
-vim.pack.add({ gh("tpope/vim-fugitive") })
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+-- Git.
+require("mini.git").setup()
+vim.keymap.set("n", "<leader>gs", "<Cmd>Git status<CR>", { desc = "Git status" })
