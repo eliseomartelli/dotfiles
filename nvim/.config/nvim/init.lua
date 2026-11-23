@@ -230,19 +230,6 @@ vim.api.nvim_create_user_command("UpdateAll", update_all, {
 	desc = "Update vim.pack plugins, Treesitter parsers, and Mason tools",
 })
 
-local function run_build(name, cmd, cwd)
-	local result = vim.system(cmd, { cwd = cwd }):wait()
-	if result.code ~= 0 then
-		local stderr = result.stderr or ""
-		local stdout = result.stdout or ""
-		local output = stderr ~= "" and stderr or stdout
-		if output == "" then
-			output = "No output from build command."
-		end
-		vim.notify(string.format("Build failed for %s:\n%s", name, output), vim.log.levels.ERROR)
-	end
-end
-
 -- This autocommand runs after a plugin is installed or updated and
 --  runs the appropriate build command for that plugin if necessary.
 --
