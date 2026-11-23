@@ -45,7 +45,6 @@ brew install \
 	node \
 	patat \
 	pinentry-mac \
-	pnpm \
 	prettier \
 	prettierd \
 	python \
@@ -65,7 +64,6 @@ brew install \
 ;
 
 brew install --cask \
-	antigravity-cli \
 	betterdisplay \
 	claude-code \
 	font-meslo-lg-nerd-font \
