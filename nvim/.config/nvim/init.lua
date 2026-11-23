@@ -29,8 +29,7 @@ vim.o.smartcase = true
 
 -- Use ripgrep for search if available.
 if vim.fn.executable("rg") == 1 then
-	vim.o.grepprg =
-		"rg --smart-case --vimgrep --no-heading --follow --multiline --multiline-dotall --hidden --pcre2 --regexp"
+	vim.o.grepprg = "rg --smart-case --vimgrep --no-heading --hidden --glob '!.git' --regexp"
 	vim.o.grepformat = "%f:%l:%c:%m"
 end
 
@@ -331,35 +330,11 @@ require("mini.extra").setup()
 require("mini.pick").setup()
 vim.ui.select = MiniPick.ui_select
 
--- Pick a picker from the registry.
-MiniPick.registry.registry = function()
-	local items = vim.tbl_keys(MiniPick.registry)
-	table.sort(items)
-	local chosen = MiniPick.start({ source = { items = items, name = "Pickers", choose = function() end } })
-	if chosen == nil then
-		return
-	end
-	return MiniPick.registry[chosen]()
-end
-
--- Grep for the word under the cursor, or the visual selection.
-local function grep_current_word()
-	local mode = vim.fn.mode()
-	local pattern
-	if mode == "v" or mode == "V" or mode == "\22" then
-		pattern = table.concat(vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode }), "\n")
-	else
-		pattern = vim.fn.expand("<cword>")
-	end
-	MiniPick.builtin.grep({ pattern = pattern })
-end
-
 vim.keymap.set("n", "<leader>fh", MiniPick.builtin.help, { desc = "[F]ind [H]elp" })
 vim.keymap.set("n", "<leader>fk", MiniExtra.pickers.keymaps, { desc = "[F]ind [K]eymaps" })
 vim.keymap.set("n", "<leader>ff", MiniPick.builtin.files, { desc = "[F]ind [F]iles" })
-vim.keymap.set("n", "<leader>fs", MiniPick.registry.registry, { desc = "[F]ind [S]earch pickers" })
-vim.keymap.set({ "n", "v" }, "<leader>fcw", grep_current_word, { desc = "[F]ind [C]urrent [W]ord" })
-vim.keymap.set("n", "<leader>fg", MiniPick.builtin.grep_live, { desc = "[F]ind [G]rep" })
+vim.keymap.set("n", "<leader>fcw", '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = "[F]ind [C]urrent [W]ord" })
+vim.keymap.set("n", "<leader>fg", "<Cmd>Pick grep_live<CR>", { desc = "[F]ind [G]rep" })
 vim.keymap.set("n", "<leader>fd", MiniExtra.pickers.diagnostic, { desc = "[F]ind [D]iagnostics" })
 vim.keymap.set("n", "<leader>fr", MiniPick.builtin.resume, { desc = "[F]ind [R]esume" })
 vim.keymap.set("n", "<leader>fu", MiniExtra.pickers.oldfiles, { desc = "[F]ind [U]sed files" })
