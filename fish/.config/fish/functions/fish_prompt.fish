@@ -45,22 +45,26 @@ function fish_prompt
         end
 
         function _jj_branch_name
-            # Uses modern template syntax to fetch the first bookmark name, falling back to a short change ID
-            set -l log_output (jj log --ignore-working-copy --no-graph --no-color -r '@' -T 'try(bookmarks.first().name(), change_id.short())' 2>/dev/null)
-            if test -n "$log_output"
-                echo "$log_output"
+            # Bookmark on @ or its parent (latest one wins), else the shortest unique change ID of @
+            set -l bookmark (jj log --ignore-working-copy --no-graph --color never -r 'latest((@ | @-) & bookmarks())' -T 'bookmarks.first().name()' 2>/dev/null)
+            if test -n "$bookmark"
+                echo "$bookmark"
             else
-                echo "jj"
+                set -l change (jj log --ignore-working-copy --no-graph --color never -r '@' -T 'change_id.shortest()' 2>/dev/null)
+                if test -n "$change"
+                    echo "$change"
+                else
+                    echo "jj"
+                end
             end
         end
 
         function _is_jj_dirty
-            # In jj, the working copy itself is a commit. We check if there are any changes 
-            # relative to its parent, or if the working copy is empty/modified.
-            not jj diff --ignore-working-copy --quiet 2>/dev/null
-            # Alternatively, if you want to catch uncommitted working copy changes:
-            set -l stat (jj st --no-pager 2>/dev/null)
-            test -n "$stat"
+            # The working copy is itself a commit: dirty means @ is not empty.
+            # (`jj st` always prints output, so it cannot be used as the test.)
+            # No --ignore-working-copy here: it would skip the snapshot that picks up file edits.
+            set -l state (jj log --no-graph --color never --no-pager -r '@' -T 'if(empty, "", "dirty")' 2>/dev/null)
+            test -n "$state"
         end
 
         function _is_jj_repo
