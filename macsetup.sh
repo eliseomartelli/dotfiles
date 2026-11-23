@@ -63,6 +63,11 @@ brew install \
 	zoxide \
 ;
 
+brew install \
+	xdg-ninja \
+	--HEAD \
+;
+
 brew install --cask \
 	betterdisplay \
 	claude-code \
