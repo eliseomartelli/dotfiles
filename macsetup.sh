@@ -33,6 +33,7 @@ brew install \
 	fzf \
 	git-absorb \
 	go \
+	git-lfs \
 	golangci-lint \
 	jira-cli \
 	jj \
