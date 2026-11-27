@@ -50,6 +50,7 @@ rex.bind("ctrl+b>shift+\\", "pane.split", { direction = "right" }) -- |
 rex.bind("ctrl+b>]", "pane.paste")
 rex.bind("ctrl+b>w", "pane.go_to")
 rex.bind("ctrl+b>f", "pane.float")
+rex.bind("ctrl+b>u", "session.undo_close")
 
 -- tmux resize: ctrl+b then H/J/K/L resizes once and stays in resize mode,
 -- so H/J/K/L (or h/j/k/l) keep resizing until Escape or Enter.
